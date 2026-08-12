@@ -209,7 +209,10 @@
         let db = [
             {
                 profile: {
-                    name: 'Mr. Big Trader',
+                    first_name: 'Vladimir',
+                    last_name: 'Spirin',
+                    email: 'spirin.vladimir@gmail.com',
+                    country: 'Russia',
                     login: 'testLogin',
                     password: 'testPassword'
                 },
@@ -229,6 +232,34 @@
                         balance: 100000,
                         leverage: '1:500',
                         status: 'active'
+                    }
+                ]
+            },
+            {
+                profile: {
+                    first_name: 'Nikola',
+                    last_name: 'Tesla',
+                    email: 'nikola.tesla@gmail.com',
+                    country: 'Serbia',
+                    login: 'f',
+                    password: 'f'
+                },
+                accounts: [
+                    {
+                        demo: false,
+                        id: 2129384758,
+                        currency: 'EUR',
+                        balance: 1000,
+                        leverage: '1:1',
+                        status: 'disabled'
+                    },
+                    {
+                        demo: true,
+                        id: 2129384759,
+                        currency: 'EUR',
+                        balance: 1000,
+                        leverage: '1:1',
+                        status: 'disabled'
                     }
                 ]
             }
@@ -286,19 +317,19 @@
                     <dl class="info-list">
                         <div class="info-item">
                             <dt>First Name</dt>
-                            <dd>Vladimir</dd>
+                            <dd id="profile_first_name"></dd>
                         </div>
                         <div class="info-item">
                             <dt>Last Name</dt>
-                            <dd>Spirin</dd>
+                            <dd id="profile_last_name"></dd>
                         </div>
                         <div class="info-item">
                             <dt>Email</dt>
-                            <dd>spirin.vladimir@gmail.com</dd>
+                            <dd id="profile_email"></dd>
                         </div>
                         <div class="info-item">
                             <dt>Country</dt>
-                            <dd>Russia</dd>
+                            <dd id="profile_country"></dd>
                         </div>
                     </dl>
                 </section>`
@@ -355,8 +386,12 @@
         // All dinamic logic here, bindings etc
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
-            client_name.textContent = client.profile.name
+            client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
             client_name.hidden = false
+            profile_first_name.textContent = client.profile.first_name
+            profile_last_name.textContent = client.profile.last_name
+            profile_email.textContent = client.profile.email
+            profile_country.textContent = client.profile.country
             logout.hidden = false
             let activeMenu = document.getElementById('menu_' + localStorage.left_side_menu)
             activeMenu.classList.add('active')
@@ -378,8 +413,12 @@
                 localStorage.logged = login_login.value
                 login_form.hidden = true
                 left_side_menu.hidden = false
-                client_name.textContent = client.profile.name
+                client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
                 client_name.hidden = false
+                profile_first_name.textContent = client.profile.first_name
+                profile_last_name.textContent = client.profile.last_name
+                profile_email.textContent = client.profile.email
+                profile_country.textContent = client.profile.country
                 logout.hidden = false
                 menu_profile.classList.add('active')
                 localStorage.left_side_menu = 'profile'
