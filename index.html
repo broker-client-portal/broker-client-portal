@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>A CLIENT PORTAL</title>
+    <meta charset='utf-8' />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="transparent">
+    <script defer src="https://s3.tradingview.com/tv.js"></script>
+    <style>
+        [hidden] {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        html {
+            --text-color: white;
+            --active-color: black;
+            --root-color: lightgray;
+            --header-color: gray;
+            --left-side-menu-color: gray;
+        }
+        html[dark] {
+            --text-color: black;
+            --active-color: white;
+            --root-color: dimgray;
+            --header-color: gray;
+            --left-side-menu-color: gray;
+        }
+
+        html, body { height: 100%; width: 100%; margin: 0; padding: 0;}
+        body {position: relative;}
+
+        #root {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--root-color);
+            font-family: "system-ui";
+            font-size: 3vw;
+            color: var(--text-color);
+        }
+        header {
+            position: absolute;
+            width: 100%;
+            height: 10%;
+            background-color: var(--header-color);
+        }
+        #left_side_menu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20%;
+            height: 100%;
+            background-color: var(--left-side-menu-color);
+        }
+        #logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30%;
+            height: 100%;
+            border: solid 1px red;
+        }
+        #client_name {
+            border: solid 1px blue;
+            position: absolute;
+            top: 0;
+            left: 30%;
+            width: 40%;
+            height: 100%;            
+        }
+        #logout {
+            border: solid 1px green;
+            position: absolute;
+            top: 0;
+            left: 70%;
+            width: 30%;
+            height: 100%;            
+        }
+        #menu_profile {
+            position: absolute;
+            bottom: 40%;
+            left: 0;
+            width: 100%;
+            height: 20%;            
+        }
+        #menu_accounts {
+            position: absolute;
+            bottom: 20%;
+            left: 0;
+            width: 100%;
+            height: 20%;
+        }
+        #menu_terminal {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;            
+        }
+        
+        #view_profile,
+        #view_accounts,
+        #view_terminal {
+            position: absolute;
+            top: 10%;
+            left: 20%;
+            width: 80%;
+            height: 90%;            
+        }
+        
+        #login_form {
+            position: absolute;
+            top: 10%;
+            left: 0;
+            width: 100%;
+            height: 90%;
+        }        
+/* total 100% login form.
+   gap - 10%
+   Offsets:
+      | 10 (20) 10 (20) 10 (20) 10 |
+          >10% login
+                  >40% password
+                          >70% submit
+*/
+        #login_login {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 20%;
+            font-size: 3vw; 
+            font-family: "system-ui";
+            box-sizing: border-box; 
+            display: flex;
+            align-items: center;
+        }
+        #login_password {
+            position: absolute;
+            top: 40%;
+            left: 10%;
+            width: 80%;
+            height: 20%;
+            font-size: 3vw; 
+            font-family: "system-ui";
+            box-sizing: border-box; 
+            display: flex;
+            align-items: center;
+        }
+        #login_sumbit {
+            position: absolute;
+            top: 70%;
+            left: 10%;
+            width: 80%;
+            height: 20%;
+            font-size: 3vw; 
+            font-family: "system-ui";
+            box-sizing: border-box; 
+            display: flex;
+            align-items: center;
+        }
+        
+        .wrong {
+            border: solid 2px red;
+        }
+        .active {
+            color: var(--active-color)
+        }
+        
+        .info-list {
+            display: grid;
+            gap: 1rem;
+            margin: 0;
+        }
+        
+        .info-item {
+            display: grid;
+            gap: 0.25rem;
+        }
+        
+        .info-item dt {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .info-item dd {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        window.dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+        document.documentElement.toggleAttribute('dark', window.dark)
+        if (window.matchMedia) {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+            mediaQuery.addEventListener('change', e =>
+                document.documentElement.toggleAttribute('dark', window.dark = e.matches)
+            )
+        }
+        
+        let client = null
+        let db = [
+            {
+                profile: {
+                    name: 'Mr. Big Trader',
+                    login: 'testLogin',
+                    password: 'testPassword'
+                },
+                accounts: [
+                    {
+                        demo: false,
+                        id: 1029384756,
+                        currency: 'USD',
+                        balance: 10000,
+                        leverage: '1:500',
+                        status: 'active'
+                    },
+                    {
+                        demo: true,
+                        id: 1029384757,
+                        currency: 'USD',
+                        balance: 100000,
+                        leverage: '1:500',
+                        status: 'active'
+                    }
+                ]
+            }
+        ]
+        
+        const create_top_header_navbar = () => {
+            let header = document.createElement('header')
+            root.appendChild(header)
+
+            let logo = document.createElement('div')
+            logo.id = 'logo'
+            logo.textContent = 'Logo'
+            header.appendChild(logo)
+
+            let clientName = document.createElement('div')
+            clientName.hidden = true
+            clientName.id = 'client_name'
+            header.appendChild(clientName)
+            
+            let logout = document.createElement('div')
+            logout.hidden = true
+            logout.id = 'logout'
+            logout.textContent = 'Logout'
+            header.appendChild(logout)
+        }
+        
+        const create_left_side_menu = () => {
+            let leftSideMenu = document.createElement('div')
+            leftSideMenu.hidden = true
+            leftSideMenu.id = 'left_side_menu'
+            root.appendChild(leftSideMenu)
+
+            let menuProfile = document.createElement('div')
+            menuProfile.id = 'menu_profile'
+            menuProfile.textContent = 'Profile'
+            leftSideMenu.appendChild(menuProfile)
+
+            let menuAccounts = document.createElement('div')
+            menuAccounts.id = 'menu_accounts'
+            menuAccounts.textContent = 'Accounts'
+            leftSideMenu.appendChild(menuAccounts)
+            
+            let menuTerminal = document.createElement('div')
+            menuTerminal.id = 'menu_terminal'
+            menuTerminal.textContent = 'Terminal'
+            leftSideMenu.appendChild(menuTerminal)
+        }
+        const create_views = () => {
+            let viewProfile = document.createElement('div')
+            viewProfile.hidden = true
+            viewProfile.id = 'view_profile'
+            viewProfile.innerHTML = `
+                <section aria-labelledby="personal-info">
+                    <h2 id="personal-info">Personal Information</h2>
+                    <dl class="info-list">
+                        <div class="info-item">
+                            <dt>First Name</dt>
+                            <dd>Vladimir</dd>
+                        </div>
+                        <div class="info-item">
+                            <dt>Last Name</dt>
+                            <dd>Spirin</dd>
+                        </div>
+                        <div class="info-item">
+                            <dt>Email</dt>
+                            <dd>spirin.vladimir@gmail.com</dd>
+                        </div>
+                        <div class="info-item">
+                            <dt>Country</dt>
+                            <dd>Russia</dd>
+                        </div>
+                    </dl>
+                </section>`
+            root.appendChild(viewProfile)
+
+            let viewAccounts = document.createElement('div')
+            viewAccounts.hidden = true
+            viewAccounts.id = 'view_accounts'
+            viewAccounts.textContent = 'My Accounts table..'
+            root.appendChild(viewAccounts)
+            
+            let viewTerminal = document.createElement('div')
+            viewTerminal.hidden = true
+            viewTerminal.id = 'view_terminal'
+            viewTerminal.textContent = 'Load TradingView chart widget (Terminal)'
+            root.appendChild(viewTerminal)
+        }
+
+        const create_login_form = () => {
+            let form = document.createElement('form')
+            form.hidden = true
+            form.id = 'login_form'
+            form.method = 'POST'
+            form.action = '#'
+            root.appendChild(form)
+
+            let login = document.createElement('input')
+            login.id = 'login_login'
+            login.type = 'text'
+            login.name = 'login'
+            login.placeholder = 'Login'
+            form.appendChild(login)
+
+            let password = document.createElement('input')
+            password.id = 'login_password'
+            password.type = 'password'
+            password.name = 'password'
+            password.placeholder = 'Password'
+            form.appendChild(password)
+
+            const submit = document.createElement('input')
+            submit.id = 'login_sumbit'
+            submit.type = 'submit'
+            submit.value = 'Enter'
+            form.appendChild(submit)
+        }
+        
+        create_views()
+        create_login_form()
+        create_left_side_menu()
+        create_top_header_navbar()
+        
+        // Bellow handlers for browser & user action.
+        // All dinamic logic here, bindings etc
+        if (localStorage.logged) {
+            client = db.find(({profile}) => localStorage.logged == profile.login)
+            client_name.textContent = client.profile.name
+            client_name.hidden = false
+            logout.hidden = false
+            let activeMenu = document.getElementById('menu_' + localStorage.left_side_menu)
+            activeMenu.classList.add('active')
+            let activeView = document.getElementById('view_' + localStorage.left_side_menu)
+            activeView.hidden = false
+            left_side_menu.hidden = false
+        } else {
+            login_form.hidden = false
+        }
+        
+        login_form.addEventListener('submit', e => {
+            e.preventDefault()
+            let client = db.find(({profile}) =>
+                profile.login == login_login.value &&
+                profile.password == login_password.value
+            )
+            
+            if (client) {
+                localStorage.logged = login_login.value
+                login_form.hidden = true
+                left_side_menu.hidden = false
+                client_name.textContent = client.profile.name
+                client_name.hidden = false
+                logout.hidden = false
+                menu_profile.classList.add('active')
+                localStorage.left_side_menu = 'profile'
+                view_profile.hidden = false
+            } else {
+                login_login.classList.add('wrong')
+                login_password.classList.add('wrong')
+            }
+        })
+        
+        login_login.onfocus =
+        login_password.onfocus = () => {
+            login_login.classList.remove('wrong')
+            login_password.classList.remove('wrong')
+        }
+        logout.onpointerup = () => {
+            localStorage.removeItem('logged')
+            localStorage.removeItem('left_side_menu')
+            login_form.hidden = false
+            left_side_menu.hidden = true
+            client_name.hidden = true
+            logout.hidden = true
+            login_login.value = ''
+            login_password.value = ''
+            view_profile.hidden = true
+            view_accounts.hidden = true
+            view_terminal.hidden = true
+            menu_profile.classList.remove('active')
+            menu_accounts.classList.remove('active')
+            menu_terminal.classList.remove('active')
+        }
+        menu_profile.onpointerup = () => {
+            menu_profile.classList.add('active')
+            menu_accounts.classList.remove('active')
+            menu_terminal.classList.remove('active')
+            localStorage.left_side_menu = 'profile'
+            view_profile.hidden = false
+            view_accounts.hidden = true
+            view_terminal.hidden = true
+        }
+        menu_accounts.onpointerup = () => {
+            menu_profile.classList.remove('active')
+            menu_accounts.classList.add('active')
+            menu_terminal.classList.remove('active')
+            localStorage.left_side_menu = 'accounts'
+            view_profile.hidden = true
+            view_accounts.hidden = false
+            view_terminal.hidden = true
+        }
+        menu_terminal.onpointerup = () => {
+            menu_profile.classList.remove('active')
+            menu_accounts.classList.remove('active')
+            menu_terminal.classList.add('active')
+            localStorage.left_side_menu = 'terminal'
+            view_profile.hidden = true
+            view_accounts.hidden = true
+            view_terminal.hidden = false
+        }
+    </script>
+</body>
+</html>
