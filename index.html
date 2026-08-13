@@ -424,7 +424,7 @@
                 db => new Promise(y =>
                     db.transaction('candles', 'readwrite').objectStore('candles').get(symbol).onsuccess = ({srcElement}) => {
                         if (srcElement.result) return y(srcElement.result.candles)
-                        let candles = getHistory1d(symbol, 365)
+                        let candles = getHistory1s(symbol, 24 * 60 * 60)
                         saveHistory(symbol, candles)
                         return y(candles)
                     }
@@ -505,6 +505,24 @@
                 ]
             }
         ]
+        
+        const realtimeCandleStream = () => {
+            let timeNowSec = Date.now() / 1000
+            Object.keys(series).forEach(symbol => {
+                let candles = series[symbol].data()
+                let lastCandle = candles[candles.length - 1]
+                let candle
+                while (lastCandle.time < timeNowSec) {
+                    candle = generateCandle(symbol, lastCandle.time + 1, lastCandle.close)
+                    candles.push(candle)
+                    lastCandle = candle
+                }
+                series[symbol].setData(candles)
+                chart.timeScale().fitContent()
+                saveHistory(symbol, candles)
+            })
+            setTimeout(realtimeCandleStream, 1000)
+        }
         
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
@@ -774,6 +792,7 @@
                 .then(candles => {
                     series[localStorage.instrument].setData(candles)
                     chart.timeScale().fitContent()
+                    realtimeCandleStream()
                 })
             })
         }
@@ -841,13 +860,13 @@
                 volume: Math.floor(currentVolume[symbol] * (1 + (0.5 - Math.random()) / 20))
             }
         }
-        const getHistory1d = (symbol, days) => {
+        const getHistory1s = (symbol, secondsBefore) => {
             let candles = []
             let price = currentPrice[symbol]
             let timeNowSec = Date.now() / 1000
-            let oneDaySec = 60 * 60 * 24
-            let timeFirstCandle = timeNowSec - oneDaySec * days
-            for (let time = timeFirstCandle; time <= timeNowSec; time += oneDaySec) {
+            let oneSec = 1
+            let timeFirstCandle = timeNowSec - oneSec * secondsBefore
+            for (let time = timeFirstCandle; time <= timeNowSec; time += oneSec) {
                 const candle = generateCandle(symbol, time, price)
                 price = candle.close
                 candles.push(candle)
