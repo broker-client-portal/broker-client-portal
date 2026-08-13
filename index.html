@@ -234,48 +234,6 @@
         font-weight: 600;
     }
 
-    #indicators {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        margin-top: 4px;
-        margin-left: 14px;
-        padding: 10px;
-        border-radius: 14px;
-        background: var(--submenu-bg);
-        border: 1px solid var(--submenu-border);
-    }
-
-    #indicators > * {
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        padding: 0 12px;
-        border-radius: 10px;
-        cursor: pointer;
-        user-select: none;
-        color: var(--text-color);
-        background: transparent;
-        transition:
-            background var(--transition-fast),
-            color var(--transition-fast),
-            transform var(--transition-fast);
-    }
-
-    #indicators > *:hover {
-        background: var(--submenu-item-hover-bg);
-    }
-
-    #indicators > *:active {
-        transform: translateY(1px);
-    }
-
-    #indicators > *.active {
-        background: var(--submenu-active-bg);
-        color: var(--submenu-active-text);
-        font-weight: 600;
-    }
-
     #view_profile,
     #view_accounts,
     #view_terminal,
@@ -414,17 +372,6 @@
         #menu_terminal {
             flex: 1 1 140px;
             justify-content: center;
-            min-height: 44px;
-            white-space: nowrap;
-        }
-
-        #indicators {
-            flex: 1 0 100%;
-            margin-left: 0;
-            margin-top: 0;
-        }
-
-        #indicators > * {
             min-height: 44px;
             white-space: nowrap;
         }
@@ -645,32 +592,6 @@
                 if (!window.chartingLibraryReady) initChart()
             }
             leftSideMenu.appendChild(menuTerminal)
-            
-            let menuInstruments = document.createElement('div')
-            menuInstruments.id = 'menu_instruments'
-            menuInstruments.innerHTML = instruments.map(instrument =>
-                `<div id="${instrument.symbol}" class="instrument${localStorage.instrument == instrument.symbol ? ' active' : ''}">${instrument.symbol}</div>`
-            ).join('')
-            menuInstruments.hidden = true
-            menuInstruments.onpointerup = e => {
-                let symbol = e.target.id
-                if (localStorage.instrument == symbol) return
-                document.getElementById(localStorage.instrument).classList.remove('active')
-                e.target.classList.add('active')
-                series[localStorage.instrument].applyOptions({visible: false})
-                if (series[symbol]) {
-                    series[localStorage.instrument].applyOptions({visible: true})
-                } else {
-                    loadHistory(symbol)
-                    .then(candles => {
-                        series[symbol] = chart.addSeries(LightweightCharts.CandlestickSeries)
-                        series[symbol].setData(candles)
-                        chart.timeScale().fitContent()
-                    })
-                }
-                localStorage.instrument = symbol
-            }
-            menuTerminal.appendChild(menuInstruments)
         }
         const createViews = () => {
             let viewProfile = document.createElement('div')
@@ -710,6 +631,46 @@
             viewTerminal.hidden = true
             viewTerminal.id = 'view_terminal'
             main.appendChild(viewTerminal)
+            
+            let terminalToolbar = document.createElement('div')
+            terminalToolbar.id = 'terminal_toolbar'
+            viewTerminal.appendChild(terminalToolbar)
+            
+            let terminalChart = document.createElement('div')
+            terminalChart.id = 'terminal_chart'
+            viewTerminal.appendChild(terminalChart)
+            
+            let labelInstrumentSelect = document.createElement('label')
+            labelInstrumentSelect.setAttribute('for', 'instrument_select')
+            labelInstrumentSelect.textContent = 'Instrument'
+            terminalToolbar.appendChild(labelInstrumentSelect)
+            
+            let selectInstrument = document.createElement('select')
+            selectInstrument.id = 'instrument_select'
+            selectInstrument.onchange = e => {
+                let {symbol} = instruments[selectInstrument.selectedIndex]
+                if (localStorage.instrument == symbol) return
+                series[localStorage.instrument].applyOptions({visible: false})
+                if (series[symbol]) {
+                    series[symbol].applyOptions({visible: true})
+                } else {
+                    loadHistory(symbol)
+                    .then(candles => {
+                        series[symbol] = chart.addSeries(LightweightCharts.CandlestickSeries)
+                        series[symbol].setData(candles)
+                        chart.timeScale().fitContent()
+                    })
+                }
+                localStorage.instrument = symbol
+            }
+            terminalToolbar.appendChild(selectInstrument)
+            
+            instruments.forEach(instrument => {
+                let optionInstrument = document.createElement('option')
+                optionInstrument.value = instrument.symbol
+                optionInstrument.textContent = instrument.symbol
+                selectInstrument.appendChild(optionInstrument)
+            })
         }
 
         const createLoginForm = () => {
@@ -813,7 +774,6 @@
                 .then(candles => {
                     series[localStorage.instrument].setData(candles)
                     chart.timeScale().fitContent()
-                    menu_instruments.hidden = false
                 })
             })
         }
