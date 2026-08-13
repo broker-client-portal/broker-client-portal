@@ -447,7 +447,16 @@
                 })
             })
         }
+
+        const resizeChart = () =>
+            chart.applyOptions({
+                width: view_terminal.clientWidth,
+                height: view_terminal.clientHeight
+            })
         
+        window.addEventListener('resize', resizeChart)
+        window.addEventListener('orientationchange', resizeChart)
+
         createViews()
         createLoginForm()
         createLeftSideMenu()
