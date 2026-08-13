@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script defer src="https://charting-library.tradingview-widget.com/datafeeds/udf/dist/bundle.js"></script>
     <title>A CLIENT PORTAL</title>
     <meta charset='utf-8' />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="transparent">
-    <script defer src="https://s3.tradingview.com/tv.js"></script>
     <style>
         [hidden] {
             display: none !important;
@@ -117,14 +117,6 @@
             width: 100%;
             height: 90%;
         }        
-/* total 100% login form.
-   gap - 10%
-   Offsets:
-      | 10 (20) 10 (20) 10 (20) 10 |
-          >10% login
-                  >40% password
-                          >70% submit
-*/
         #login_login {
             position: absolute;
             top: 10%;
@@ -200,10 +192,47 @@
         document.documentElement.toggleAttribute('dark', window.dark)
         if (window.matchMedia) {
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-            mediaQuery.addEventListener('change', e =>
+            mediaQuery.addEventListener('change', e => {
                 document.documentElement.toggleAttribute('dark', window.dark = e.matches)
-            )
+                window.chart?.applyOptions({layout: {background: {color: dark ? '#696969' : '#d3d3d3'}}})
+            })
         }
+        
+        let iDB
+        const getDB = () => iDB ??= new Promise((y, n) => {
+            try {
+                const r = indexedDB.open('candles', 1)
+                r.onerror = n
+                r.onupgradeneeded = _ => {
+                    const db = _.target.result
+                    db.createObjectStore('candles', {keyPath: 'symbol'}).transaction.oncomplete = () => y(db)
+                }
+                r.onsuccess = ({target}) => {
+                    y(target.result)
+                }
+            } catch (e) {
+                n(e)
+            }
+        })
+
+        const loadHistory = symbol =>
+            getDB().then(
+                db => new Promise(y =>
+                    db.transaction('candles', 'readwrite').objectStore('candles').get(symbol).onsuccess = ({srcElement}) => {
+                        if (srcElement.result) return y(srcElement.result.candles)
+                        let candles = getHistory1d(symbol, 365)
+                        saveHistory(symbol, candles)
+                        return y(candles)
+                    }
+                )
+            )
+        const saveHistory = (symbol, candles) =>
+            getDB().then(db =>
+                db.transaction('candles', 'readwrite').objectStore('candles').put({
+                    symbol,
+                    candles
+                })
+            )
         
         let client = null
         let db = [
@@ -344,7 +373,6 @@
             let viewTerminal = document.createElement('div')
             viewTerminal.hidden = true
             viewTerminal.id = 'view_terminal'
-            viewTerminal.textContent = 'Load TradingView chart widget (Terminal)'
             root.appendChild(viewTerminal)
         }
 
@@ -376,14 +404,55 @@
             submit.value = 'Enter'
             form.appendChild(submit)
         }
+
+        const initChart = () => {
+            let urlChartingLibrary = 'https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js'
+            window.chartingLibraryReady ??= caches.open('charting_library')
+            .then(c =>
+                c.match(urlChartingLibrary)
+                .then(r =>
+                    r || fetch(urlChartingLibrary)
+                    .then(r =>
+                        r.ok && c.put(urlChartingLibrary, r.clone()).then(_ => r)
+                    )
+                )
+            )
+            .then(_ => _.text())
+            .then(_ => eval(_))
+
+            return chartingLibraryReady
+            .then(() => {
+                window.chart = LightweightCharts.createChart(view_terminal, {
+                    width: view_terminal.clientWidth,
+                    height: view_terminal.clientHeight,
+                    layout: {
+                        background: {color: dark ? '#696969' : '#d3d3d3'},
+                        textColor: dark ? '#000000' : '#ffffff',
+                        borderColor: '#808080'
+                    },
+                    grid: {
+                        vertLines: {color: '#808080'},
+                        horzLines: {color: '#808080'}
+                    },
+                    timeScale: { visible: false },
+                    rightPriceScale: { visible: false }
+                })
+                
+                const series = chart.addSeries(LightweightCharts.CandlestickSeries)
+                
+                loadHistory('EURUSD')
+                .then(candles => {
+                    series.setData(candles)
+                    chart.timeScale().fitContent()
+                })
+            })
+        }
         
         createViews()
         createLoginForm()
         createLeftSideMenu()
         createTopHeaderNavbar()
         
-        // Bellow handlers for browser & user action.
-        // All dinamic logic here, bindings etc
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
             client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
@@ -398,6 +467,7 @@
             let activeView = document.getElementById('view_' + localStorage.left_side_menu)
             activeView.hidden = false
             left_side_menu.hidden = false
+            if (localStorage.left_side_menu == 'terminal') initChart()
         } else {
             login_form.hidden = false
         }
@@ -476,6 +546,55 @@
             view_profile.hidden = true
             view_accounts.hidden = true
             view_terminal.hidden = false
+
+            if (!window.chartingLibraryReady) initChart()
+        }
+        let instruments = [
+            { symbol: 'EURUSD', type: 'forex', digits: 5 },
+            { symbol: 'GBPUSD', type: 'forex', digits: 5 },
+            { symbol: 'USDJPY', type: 'forex', digits: 3 },
+            { symbol: 'XAUUSD', type: 'metal', digits: 2 },
+            { symbol: 'BTCUSD', type: 'crypto', digits: 2 },
+        ]
+        let currentPrice = {
+            EURUSD: 1.2,
+            GBPUSD: 1.7,
+            USDJPY: 20,
+            XAUUSD: 3403,
+            BTCUSD: 65031
+        }
+        let currentVolume = {
+            EURUSD: 1e4,
+            GBPUSD: 2e3,
+            USDJPY: 7e4,
+            XAUUSD: 2e5,
+            BTCUSD: 1e6
+        }
+        const getCurrentPrice = symbol => currentPrice[symbol] * (1 + (0.5 - Math.random()) / 20)
+        const generateCandle = (symbol, time, closePricePrevCandle) => {
+            let open = closePricePrevCandle
+            let close = closePricePrevCandle * (1 + (0.5 - Math.random()) / 20)
+            return {
+                time,
+                open,
+                close,
+                high: Math.max(open, close) * (1 + Math.random() / 30),
+                low: Math.min(open, close) * (1 - Math.random() / 30),
+                volume: Math.floor(currentVolume[symbol] * (1 + (0.5 - Math.random()) / 20))
+            }
+        }
+        const getHistory1d = (symbol, days) => {
+            let candles = []
+            let price = currentPrice[symbol]
+            let timeNowSec = Date.now() / 1000
+            let oneDaySec = 60 * 60 * 24
+            let timeFirstCandle = timeNowSec - oneDaySec * days
+            for (let time = timeFirstCandle; time <= timeNowSec; time += oneDaySec) {
+                const candle = generateCandle(symbol, time, price)
+                price = candle.close
+                candles.push(candle)
+            }
+            return candles
         }
     </script>
 </body>
