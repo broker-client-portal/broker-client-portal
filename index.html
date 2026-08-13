@@ -234,6 +234,14 @@
                 })
             )
         
+        let instruments = [
+            { symbol: 'EURUSD', type: 'forex', digits: 5 },
+            { symbol: 'GBPUSD', type: 'forex', digits: 5 },
+            { symbol: 'USDJPY', type: 'forex', digits: 3 },
+            { symbol: 'XAUUSD', type: 'metal', digits: 2 },
+            { symbol: 'BTCUSD', type: 'crypto', digits: 2 },
+        ]
+        let series = []
         let client = null
         let db = [
             {
@@ -315,6 +323,7 @@
             logout.onpointerup = () => {
                 localStorage.removeItem('logged')
                 localStorage.removeItem('left_side_menu')
+                localStorage.removeItem('instrument')
                 login_form.hidden = false
                 left_side_menu.hidden = true
                 client_name.hidden = true
@@ -379,6 +388,32 @@
                 if (!window.chartingLibraryReady) initChart()
             }
             leftSideMenu.appendChild(menuTerminal)
+            
+            let menuInstruments = document.createElement('div')
+            menuInstruments.id = 'menu_instruments'
+            menuInstruments.hidden = true
+            menuInstruments.innerHTML = instruments.map(instrument =>
+                `<div id="${instrument.symbol}" class="instrument${localStorage.instrument == instrument.symbol ? ' active' : ''}">${instrument.symbol}</div>`
+            ).join('')
+            menuInstruments.onpointerup = e => {
+                let symbol = e.target.id
+                if (localStorage.instrument == symbol) return
+                document.getElementById(localStorage.instrument).classList.remove('active')
+                e.target.classList.add('active')
+                series[localStorage.instrument].applyOptions({visible: false})
+                if (series[symbol]) {
+                    series[localStorage.instrument].applyOptions({visible: true})
+                } else {
+                    loadHistory(symbol)
+                    .then(candles => {
+                        series[symbol] = chart.addSeries(LightweightCharts.CandlestickSeries)
+                        series[symbol].setData(candles)
+                        chart.timeScale().fitContent()
+                    })
+                }
+                localStorage.instrument = symbol
+            }
+            menuTerminal.appendChild(menuInstruments)
         }
         const createViews = () => {
             let viewProfile = document.createElement('div')
@@ -446,6 +481,7 @@
                     logout.hidden = false
                     menu_profile.classList.add('active')
                     localStorage.left_side_menu = 'profile'
+                    localStorage.instrument = instruments[0].symbol
                     view_profile.hidden = false
                 } else {
                     login_login.classList.add('wrong')
@@ -514,12 +550,13 @@
                     rightPriceScale: { visible: false }
                 })
                 
-                const series = chart.addSeries(LightweightCharts.CandlestickSeries)
+                series[localStorage.instrument] ??= chart.addSeries(LightweightCharts.CandlestickSeries)
                 
-                loadHistory('EURUSD')
+                loadHistory(localStorage.instrument)
                 .then(candles => {
-                    series.setData(candles)
+                    series[localStorage.instrument].setData(candles)
                     chart.timeScale().fitContent()
+                    menu_instruments.hidden = false
                 })
             })
         }
@@ -557,13 +594,6 @@
             login_form.hidden = false
         }
 
-        let instruments = [
-            { symbol: 'EURUSD', type: 'forex', digits: 5 },
-            { symbol: 'GBPUSD', type: 'forex', digits: 5 },
-            { symbol: 'USDJPY', type: 'forex', digits: 3 },
-            { symbol: 'XAUUSD', type: 'metal', digits: 2 },
-            { symbol: 'BTCUSD', type: 'crypto', digits: 2 },
-        ]
         let currentPrice = {
             EURUSD: 1.2,
             GBPUSD: 1.7,
