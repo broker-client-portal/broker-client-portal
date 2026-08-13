@@ -312,6 +312,22 @@
             logout.hidden = true
             logout.id = 'logout'
             logout.textContent = 'Logout'
+            logout.onpointerup = () => {
+                localStorage.removeItem('logged')
+                localStorage.removeItem('left_side_menu')
+                login_form.hidden = false
+                left_side_menu.hidden = true
+                client_name.hidden = true
+                logout.hidden = true
+                login_login.value = ''
+                login_password.value = ''
+                view_profile.hidden = true
+                view_accounts.hidden = true
+                view_terminal.hidden = true
+                menu_profile.classList.remove('active')
+                menu_accounts.classList.remove('active')
+                menu_terminal.classList.remove('active')
+            }
             header.appendChild(logout)
         }
         
@@ -324,16 +340,44 @@
             let menuProfile = document.createElement('div')
             menuProfile.id = 'menu_profile'
             menuProfile.textContent = 'Profile'
+            menuProfile.onpointerup = () => {
+                menu_profile.classList.add('active')
+                menu_accounts.classList.remove('active')
+                menu_terminal.classList.remove('active')
+                localStorage.left_side_menu = 'profile'
+                view_profile.hidden = false
+                view_accounts.hidden = true
+                view_terminal.hidden = true
+            }
             leftSideMenu.appendChild(menuProfile)
 
             let menuAccounts = document.createElement('div')
             menuAccounts.id = 'menu_accounts'
             menuAccounts.textContent = 'Accounts'
+            menuAccounts.onpointerup = () => {
+                menu_profile.classList.remove('active')
+                menu_accounts.classList.add('active')
+                menu_terminal.classList.remove('active')
+                localStorage.left_side_menu = 'accounts'
+                view_profile.hidden = true
+                view_accounts.hidden = false
+                view_terminal.hidden = true
+            }
             leftSideMenu.appendChild(menuAccounts)
             
             let menuTerminal = document.createElement('div')
             menuTerminal.id = 'menu_terminal'
             menuTerminal.textContent = 'Terminal'
+            menuTerminal.onpointerup = () => {
+                menu_profile.classList.remove('active')
+                menu_accounts.classList.remove('active')
+                menu_terminal.classList.add('active')
+                localStorage.left_side_menu = 'terminal'
+                view_profile.hidden = true
+                view_accounts.hidden = true
+                view_terminal.hidden = false
+                if (!window.chartingLibraryReady) initChart()
+            }
             leftSideMenu.appendChild(menuTerminal)
         }
         const createViews = () => {
@@ -382,6 +426,32 @@
             form.id = 'login_form'
             form.method = 'POST'
             form.action = '#'
+            form.onsubmit = e => {
+                e.preventDefault()
+                let client = db.find(({profile}) =>
+                    profile.login == login_login.value &&
+                    profile.password == login_password.value
+                )
+                
+                if (client) {
+                    localStorage.logged = login_login.value
+                    login_form.hidden = true
+                    left_side_menu.hidden = false
+                    client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
+                    client_name.hidden = false
+                    profile_first_name.textContent = client.profile.first_name
+                    profile_last_name.textContent = client.profile.last_name
+                    profile_email.textContent = client.profile.email
+                    profile_country.textContent = client.profile.country
+                    logout.hidden = false
+                    menu_profile.classList.add('active')
+                    localStorage.left_side_menu = 'profile'
+                    view_profile.hidden = false
+                } else {
+                    login_login.classList.add('wrong')
+                    login_password.classList.add('wrong')
+                }
+            }
             root.appendChild(form)
 
             let login = document.createElement('input')
@@ -397,12 +467,18 @@
             password.name = 'password'
             password.placeholder = 'Password'
             form.appendChild(password)
+            
+            login.onfocus =
+            password.onfocus = () => {
+                login_login.classList.remove('wrong')
+                login_password.classList.remove('wrong')
+            }
 
             const submit = document.createElement('input')
             submit.id = 'login_sumbit'
             submit.type = 'submit'
             submit.value = 'Enter'
-            form.appendChild(submit)
+            form.appendChild(submit)            
         }
 
         const initChart = () => {
@@ -480,84 +556,7 @@
         } else {
             login_form.hidden = false
         }
-        
-        login_form.addEventListener('submit', e => {
-            e.preventDefault()
-            let client = db.find(({profile}) =>
-                profile.login == login_login.value &&
-                profile.password == login_password.value
-            )
-            
-            if (client) {
-                localStorage.logged = login_login.value
-                login_form.hidden = true
-                left_side_menu.hidden = false
-                client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
-                client_name.hidden = false
-                profile_first_name.textContent = client.profile.first_name
-                profile_last_name.textContent = client.profile.last_name
-                profile_email.textContent = client.profile.email
-                profile_country.textContent = client.profile.country
-                logout.hidden = false
-                menu_profile.classList.add('active')
-                localStorage.left_side_menu = 'profile'
-                view_profile.hidden = false
-            } else {
-                login_login.classList.add('wrong')
-                login_password.classList.add('wrong')
-            }
-        })
-        
-        login_login.onfocus =
-        login_password.onfocus = () => {
-            login_login.classList.remove('wrong')
-            login_password.classList.remove('wrong')
-        }
-        logout.onpointerup = () => {
-            localStorage.removeItem('logged')
-            localStorage.removeItem('left_side_menu')
-            login_form.hidden = false
-            left_side_menu.hidden = true
-            client_name.hidden = true
-            logout.hidden = true
-            login_login.value = ''
-            login_password.value = ''
-            view_profile.hidden = true
-            view_accounts.hidden = true
-            view_terminal.hidden = true
-            menu_profile.classList.remove('active')
-            menu_accounts.classList.remove('active')
-            menu_terminal.classList.remove('active')
-        }
-        menu_profile.onpointerup = () => {
-            menu_profile.classList.add('active')
-            menu_accounts.classList.remove('active')
-            menu_terminal.classList.remove('active')
-            localStorage.left_side_menu = 'profile'
-            view_profile.hidden = false
-            view_accounts.hidden = true
-            view_terminal.hidden = true
-        }
-        menu_accounts.onpointerup = () => {
-            menu_profile.classList.remove('active')
-            menu_accounts.classList.add('active')
-            menu_terminal.classList.remove('active')
-            localStorage.left_side_menu = 'accounts'
-            view_profile.hidden = true
-            view_accounts.hidden = false
-            view_terminal.hidden = true
-        }
-        menu_terminal.onpointerup = () => {
-            menu_profile.classList.remove('active')
-            menu_accounts.classList.remove('active')
-            menu_terminal.classList.add('active')
-            localStorage.left_side_menu = 'terminal'
-            view_profile.hidden = true
-            view_accounts.hidden = true
-            view_terminal.hidden = false
 
-            if (!window.chartingLibraryReady) initChart()
-        }
         let instruments = [
             { symbol: 'EURUSD', type: 'forex', digits: 5 },
             { symbol: 'GBPUSD', type: 'forex', digits: 5 },
