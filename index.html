@@ -17,7 +17,13 @@
             --root-color: lightgray;
             --header-color: gray;
             --left-side-menu-color: gray;
+            --page-padding: 16px;
+            --header-height: 56px;
+            --sidebar-width: 280px;
+            --surface-radius: 16px;
+            --transition-fast: 160ms ease;
         }
+
         html[dark] {
             --text-color: black;
             --active-color: white;
@@ -26,97 +32,205 @@
             --left-side-menu-color: gray;
         }
 
-        html, body { height: 100%; width: 100%; margin: 0; padding: 0;}
-        body {position: relative;}
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        body {
+            min-height: 100dvh;
+            background: var(--root-color);
+            color: var(--text-color);
+            font-family: system-ui, sans-serif;
+            font-size: clamp(14px, 1rem, 16px);
+            line-height: 1.4;
+        }
 
         #root {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
             background-color: var(--root-color);
-            font-family: "system-ui";
-            font-size: 3vw;
             color: var(--text-color);
+            padding:
+                env(safe-area-inset-top)
+                env(safe-area-inset-right)
+                env(safe-area-inset-bottom)
+                env(safe-area-inset-left);
+            overflow: hidden;
         }
         header {
-            position: absolute;
-            width: 100%;
-            height: 10%;
-            background-color: var(--header-color);
+            flex: 0 0 auto;
         }
-        #left_side_menu {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 20%;
-            height: 100%;
-            background-color: var(--left-side-menu-color);
+        main {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            overflow: hidden;
         }
         #logo {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 30%;
-            height: 100%;
-            border: solid 1px red;
+            flex: 0 0 auto;
+            min-width: 120px;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 12px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            background: rgba(255, 255, 255, 0.08);
         }
         #client_name {
-            border: solid 1px blue;
-            position: absolute;
-            top: 0;
-            left: 30%;
-            width: 40%;
-            height: 100%;            
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
+
         #logout {
-            border: solid 1px green;
-            position: absolute;
-            top: 0;
-            left: 70%;
-            width: 30%;
-            height: 100%;            
+            flex: 0 0 auto;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            user-select: none;
+            transition:
+                background var(--transition-fast),
+                transform var(--transition-fast),
+                opacity var(--transition-fast);
         }
-        #menu_profile {
-            position: absolute;
-            bottom: 40%;
-            left: 0;
-            width: 100%;
-            height: 20%;            
+
+        #logout:hover {
+            background: rgba(255, 255, 255, 0.18);
         }
-        #menu_accounts {
-            position: absolute;
-            bottom: 20%;
-            left: 0;
-            width: 100%;
-            height: 20%;
+
+        #logout:active {
+            transform: translateY(1px);
         }
+
+        @media (max-width: 720px) {
+            header {
+                flex-wrap: wrap;
+                align-items: stretch;
+            }
+
+            #logo,
+            #logout {
+                min-height: 44px;
+            }
+
+            #client_name {
+                order: 3;
+                flex: 1 0 100%;
+                min-height: 44px;
+            }
+        }
+        #left_side_menu {
+            flex: 0 0 var(--sidebar-width);
+            min-width: 220px;
+            max-width: var(--sidebar-width);
+            min-height: 0;
+        }
+
+        #menu_profile,
+        #menu_accounts,
         #menu_terminal {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 20%;            
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            user-select: none;
+            transition:
+            background var(--transition-fast),
+            color var(--transition-fast),
+            transform var(--transition-fast);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        #menu_profile:hover,
+        #menu_accounts:hover,
+        #menu_terminal:hover {
+            background: rgba(255, 255, 255, 0.12);
         }
         
+        #menu_profile.active,
+        #menu_accounts.active,
+        #menu_terminal.active {
+            background: var(--active-color);
+            color: var(--root-color);
+            border-color: transparent;
+            font-weight: 600;
+        }
+
+        @media (max-width: 720px) {
+            main {
+                flex-direction: column;
+                overflow: auto;
+            }
+            
+            #left_side_menu {
+                flex: 0 0 auto;
+                min-width: 100%;
+                max-width: 100%;
+            }
+            
+            #view_profile,
+            #view_accounts,
+            #view_terminal,
+            #login_form {
+                margin: 0 var(--page-padding) var(--page-padding);
+            }
+        }
+
         #view_profile,
         #view_accounts,
+        #view_terminal,
+        #login_form {
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 0;
+            margin: var(--page-padding);
+            padding: 20px;
+            border-radius: var(--surface-radius);
+            background: rgba(255, 255, 255, 0.08);
+            overflow: auto;
+        }
+
         #view_terminal {
-            position: absolute;
-            top: 10%;
-            left: 20%;
-            width: 80%;
-            height: 90%;            
+            padding: 0;
+            overflow: hidden;
         }
         
         #login_form {
-            position: absolute;
-            top: 10%;
-            left: 0;
-            width: 100%;
-            height: 90%;
-        }        
+            width: min(100%, 520px);
+            align-self: center;
+        }       
         #login_login {
             position: absolute;
             top: 10%;
@@ -344,7 +458,7 @@
             let leftSideMenu = document.createElement('div')
             leftSideMenu.hidden = true
             leftSideMenu.id = 'left_side_menu'
-            root.appendChild(leftSideMenu)
+            main.appendChild(leftSideMenu)
 
             let menuProfile = document.createElement('div')
             menuProfile.id = 'menu_profile'
@@ -441,18 +555,18 @@
                         </div>
                     </dl>
                 </section>`
-            root.appendChild(viewProfile)
+            main.appendChild(viewProfile)
 
             let viewAccounts = document.createElement('div')
             viewAccounts.hidden = true
             viewAccounts.id = 'view_accounts'
             viewAccounts.textContent = 'My Accounts table..'
-            root.appendChild(viewAccounts)
+            main.appendChild(viewAccounts)
             
             let viewTerminal = document.createElement('div')
             viewTerminal.hidden = true
             viewTerminal.id = 'view_terminal'
-            root.appendChild(viewTerminal)
+            main.appendChild(viewTerminal)
         }
 
         const createLoginForm = () => {
@@ -488,7 +602,7 @@
                     login_password.classList.add('wrong')
                 }
             }
-            root.appendChild(form)
+            main.appendChild(form)
 
             let login = document.createElement('input')
             login.id = 'login_login'
@@ -570,10 +684,13 @@
         window.addEventListener('resize', resizeChart)
         window.addEventListener('orientationchange', resizeChart)
 
+        createTopHeaderNavbar()
+        let main = document.createElement('main')
+        main.id = 'main'
+        root.appendChild(main)
+        createLeftSideMenu()
         createViews()
         createLoginForm()
-        createLeftSideMenu()
-        createTopHeaderNavbar()
         
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
