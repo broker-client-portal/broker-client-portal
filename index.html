@@ -265,7 +265,7 @@
             }
         ]
         
-        const create_top_header_navbar = () => {
+        const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
             root.appendChild(header)
 
@@ -286,7 +286,7 @@
             header.appendChild(logout)
         }
         
-        const create_left_side_menu = () => {
+        const createLeftSideMenu = () => {
             let leftSideMenu = document.createElement('div')
             leftSideMenu.hidden = true
             leftSideMenu.id = 'left_side_menu'
@@ -307,7 +307,7 @@
             menuTerminal.textContent = 'Terminal'
             leftSideMenu.appendChild(menuTerminal)
         }
-        const create_views = () => {
+        const createViews = () => {
             let viewProfile = document.createElement('div')
             viewProfile.hidden = true
             viewProfile.id = 'view_profile'
@@ -348,7 +348,7 @@
             root.appendChild(viewTerminal)
         }
 
-        const create_login_form = () => {
+        const createLoginForm = () => {
             let form = document.createElement('form')
             form.hidden = true
             form.id = 'login_form'
@@ -377,10 +377,10 @@
             form.appendChild(submit)
         }
         
-        create_views()
-        create_login_form()
-        create_left_side_menu()
-        create_top_header_navbar()
+        createViews()
+        createLoginForm()
+        createLeftSideMenu()
+        createTopHeaderNavbar()
         
         // Bellow handlers for browser & user action.
         // All dinamic logic here, bindings etc
