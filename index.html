@@ -264,51 +264,6 @@
         box-shadow: none;
     }
 
-    #terminal_toolbar {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        z-index: 3;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 8px 10px;
-        border-radius: 12px;
-        background: var(--surface-color);
-        border: 1px solid var(--surface-border);
-    }
-
-    #terminal_toolbar label {
-        flex: 0 0 auto;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--text-color);
-    }
-
-    #instrument_select {
-        min-width: 160px;
-        min-height: 36px;
-        padding: 0 12px;
-        font: inherit;
-        color: var(--text-color);
-        background: var(--root-color);
-        border: 1px solid var(--surface-border);
-        border-radius: 10px;
-        outline: none;
-    }
-
-    #instrument_select:focus {
-        box-shadow: var(--focus-ring);
-        border-color: transparent;
-    }
-    
-    #terminal_chart {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-    }
-
     #login_form {
         width: min(100%, 520px);
         margin: auto;
@@ -440,18 +395,6 @@
         #login_form {
             width: auto;
         }
-        #terminal_toolbar {
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            gap: 8px;
-            padding: 8px;
-        }
-        
-        #instrument_select {
-            flex: 1 1 auto;
-            min-width: 0;
-        }
     }
     </style>
 </head>
@@ -468,50 +411,6 @@
             })
         }
         
-        let iDB
-        const getDB = () => iDB ??= new Promise((y, n) => {
-            try {
-                const r = indexedDB.open('candles', 1)
-                r.onerror = n
-                r.onupgradeneeded = _ => {
-                    const db = _.target.result
-                    db.createObjectStore('candles', {keyPath: 'symbol'}).transaction.oncomplete = () => y(db)
-                }
-                r.onsuccess = ({target}) => {
-                    y(target.result)
-                }
-            } catch (e) {
-                n(e)
-            }
-        })
-
-        const loadHistory = symbol =>
-            getDB().then(
-                db => new Promise(y =>
-                    db.transaction('candles', 'readwrite').objectStore('candles').get(symbol).onsuccess = ({srcElement}) => {
-                        if (srcElement.result) return y(srcElement.result.candles)
-                        let candles = getHistory1s(symbol, 24 * 60 * 60)
-                        saveHistory(symbol, candles)
-                        return y(candles)
-                    }
-                )
-            )
-        const saveHistory = (symbol, candles) =>
-            getDB().then(db =>
-                db.transaction('candles', 'readwrite').objectStore('candles').put({
-                    symbol,
-                    candles
-                })
-            )
-        
-        let instruments = [
-            { symbol: 'EURUSD', type: 'forex', digits: 5 },
-            { symbol: 'GBPUSD', type: 'forex', digits: 5 },
-            { symbol: 'USDJPY', type: 'forex', digits: 3 },
-            { symbol: 'XAUUSD', type: 'metal', digits: 2 },
-            { symbol: 'BTCUSD', type: 'crypto', digits: 2 },
-        ]
-        let series = []
         let client = null
         let db = [
             {
@@ -572,24 +471,6 @@
             }
         ]
         
-        const realtimeCandleStream = () => {
-            let timeNowSec = Date.now() / 1000
-            Object.keys(series).forEach(symbol => {
-                let candles = series[symbol].data()
-                let lastCandle = candles[candles.length - 1]
-                let candle
-                while (lastCandle.time < timeNowSec) {
-                    candle = generateCandle(symbol, lastCandle.time + 1, lastCandle.close)
-                    candles.push(candle)
-                    lastCandle = candle
-                }
-                series[symbol].setData(candles)
-                chart.timeScale().fitContent()
-                saveHistory(symbol, candles)
-            })
-            setTimeout(realtimeCandleStream, 1000)
-        }
-        
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
             root.appendChild(header)
@@ -611,7 +492,6 @@
             logout.onpointerup = () => {
                 localStorage.removeItem('logged')
                 localStorage.removeItem('left_side_menu')
-                localStorage.removeItem('instrument')
                 login_form.hidden = false
                 left_side_menu.hidden = true
                 client_name.hidden = true
@@ -673,9 +553,50 @@
                 view_profile.hidden = true
                 view_accounts.hidden = true
                 view_terminal.hidden = false
-                if (!window.chartingLibraryReady) initChart()
+                useAdvancedChartWidget({})
             }
             leftSideMenu.appendChild(menuTerminal)
+        }
+        
+        const useAdvancedChartWidget = params => {
+            if (document.getElementsByClassName('tradingview-widget-container').length) return
+            let tradingviewWidgetContainer = document.createElement('div')
+            tradingviewWidgetContainer.classList.add('tradingview-widget-container')
+            tradingviewWidgetContainer.style = 'height:100%;width:100%'
+            tradingviewWidgetContainer.innerHTML = `
+                <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+            `
+            view_terminal.appendChild(tradingviewWidgetContainer)
+            let script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js'
+            script.text = JSON.stringify({
+                "allow_symbol_change": true,
+                "calendar": false,
+                "details": true,
+                "hide_side_toolbar": false,
+                "hide_top_toolbar": false,
+                "hide_legend": false,
+                "hide_volume": false,
+                "hotlist": true,
+                "interval": "D",
+                "locale": "en",
+                "save_image": true,
+                "style": "1",
+                "symbol": "Binance:BTCUSDT",
+                "theme": "dark",
+                "timezone": "Etc/UTC",
+                "backgroundColor": "#0F0F0F",
+                "gridColor": "rgba(242, 242, 242, 0.2)",
+                "watchlist": [],
+                "withdateranges": true,
+                "range": "1D",
+                "compareSymbols": [],
+                "studies": [],
+                "autosize": true,
+                ...params
+            })                    
+            tradingviewWidgetContainer.appendChild(script)
         }
         const createViews = () => {
             let viewProfile = document.createElement('div')
@@ -715,46 +636,6 @@
             viewTerminal.hidden = true
             viewTerminal.id = 'view_terminal'
             main.appendChild(viewTerminal)
-            
-            let terminalToolbar = document.createElement('div')
-            terminalToolbar.id = 'terminal_toolbar'
-            viewTerminal.appendChild(terminalToolbar)
-            
-            let terminalChart = document.createElement('div')
-            terminalChart.id = 'terminal_chart'
-            viewTerminal.appendChild(terminalChart)
-            
-            let labelInstrumentSelect = document.createElement('label')
-            labelInstrumentSelect.setAttribute('for', 'instrument_select')
-            labelInstrumentSelect.textContent = 'Instrument'
-            terminalToolbar.appendChild(labelInstrumentSelect)
-            
-            let selectInstrument = document.createElement('select')
-            selectInstrument.id = 'instrument_select'
-            selectInstrument.onchange = e => {
-                let {symbol} = instruments[selectInstrument.selectedIndex]
-                if (localStorage.instrument == symbol) return
-                series[localStorage.instrument].applyOptions({visible: false})
-                if (series[symbol]) {
-                    series[symbol].applyOptions({visible: true})
-                } else {
-                    loadHistory(symbol)
-                    .then(candles => {
-                        series[symbol] = chart.addSeries(LightweightCharts.CandlestickSeries)
-                        series[symbol].setData(candles)
-                        chart.timeScale().fitContent()
-                    })
-                }
-                localStorage.instrument = symbol
-            }
-            terminalToolbar.appendChild(selectInstrument)
-            
-            instruments.forEach(instrument => {
-                let optionInstrument = document.createElement('option')
-                optionInstrument.value = instrument.symbol
-                optionInstrument.textContent = instrument.symbol
-                selectInstrument.appendChild(optionInstrument)
-            })
         }
 
         const createLoginForm = () => {
@@ -783,7 +664,6 @@
                     logout.hidden = false
                     menu_profile.classList.add('active')
                     localStorage.left_side_menu = 'profile'
-                    localStorage.instrument = instruments[0].symbol
                     view_profile.hidden = false
                 } else {
                     login_login.classList.add('wrong')
@@ -819,59 +699,6 @@
             form.appendChild(submit)            
         }
 
-        const initChart = () => {
-            let urlChartingLibrary = 'https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js'
-            window.chartingLibraryReady ??= caches.open('charting_library')
-            .then(c =>
-                c.match(urlChartingLibrary)
-                .then(r =>
-                    r || fetch(urlChartingLibrary)
-                    .then(r =>
-                        r.ok && c.put(urlChartingLibrary, r.clone()).then(_ => r)
-                    )
-                )
-            )
-            .then(_ => _.text())
-            .then(_ => eval(_))
-
-            return chartingLibraryReady
-            .then(() => {
-                window.chart = LightweightCharts.createChart(view_terminal, {
-                    width: view_terminal.clientWidth,
-                    height: view_terminal.clientHeight,
-                    layout: {
-                        background: {color: dark ? '#696969' : '#d3d3d3'},
-                        textColor: dark ? '#000000' : '#ffffff',
-                        borderColor: '#808080'
-                    },
-                    grid: {
-                        vertLines: {color: '#808080'},
-                        horzLines: {color: '#808080'}
-                    },
-                    timeScale: { visible: false },
-                    //rightPriceScale: { visible: false }
-                })
-                
-                series[localStorage.instrument] ??= chart.addSeries(LightweightCharts.CandlestickSeries)
-                
-                loadHistory(localStorage.instrument)
-                .then(candles => {
-                    series[localStorage.instrument].setData(candles)
-                    chart.timeScale().fitContent()
-                    realtimeCandleStream()
-                })
-            })
-        }
-
-        const resizeChart = () =>
-            chart.applyOptions({
-                width: view_terminal.clientWidth,
-                height: view_terminal.clientHeight
-            })
-        
-        window.addEventListener('resize', resizeChart)
-        window.addEventListener('orientationchange', resizeChart)
-
         createTopHeaderNavbar()
         let main = document.createElement('main')
         main.id = 'main'
@@ -894,50 +721,9 @@
             let activeView = document.getElementById('view_' + localStorage.left_side_menu)
             activeView.hidden = false
             left_side_menu.hidden = false
-            if (localStorage.left_side_menu == 'terminal') initChart()
+            if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget({})
         } else {
             login_form.hidden = false
-        }
-
-        let currentPrice = {
-            EURUSD: 1.2,
-            GBPUSD: 1.7,
-            USDJPY: 20,
-            XAUUSD: 3403,
-            BTCUSD: 65031
-        }
-        let currentVolume = {
-            EURUSD: 1e4,
-            GBPUSD: 2e3,
-            USDJPY: 7e4,
-            XAUUSD: 2e5,
-            BTCUSD: 1e6
-        }
-        const getCurrentPrice = symbol => currentPrice[symbol] * (1 + (0.5 - Math.random()) / 20)
-        const generateCandle = (symbol, time, closePricePrevCandle) => {
-            let open = closePricePrevCandle
-            let close = closePricePrevCandle * (1 + (0.5 - Math.random()) / 20)
-            return {
-                time,
-                open,
-                close,
-                high: Math.max(open, close) * (1 + Math.random() / 30),
-                low: Math.min(open, close) * (1 - Math.random() / 30),
-                volume: Math.floor(currentVolume[symbol] * (1 + (0.5 - Math.random()) / 20))
-            }
-        }
-        const getHistory1s = (symbol, secondsBefore) => {
-            let candles = []
-            let price = currentPrice[symbol]
-            let timeNowSec = Date.now() / 1000
-            let oneSec = 1
-            let timeFirstCandle = timeNowSec - oneSec * secondsBefore
-            for (let time = timeFirstCandle; time <= timeNowSec; time += oneSec) {
-                const candle = generateCandle(symbol, time, price)
-                price = candle.close
-                candles.push(candle)
-            }
-            return candles
         }
     </script>
 </body>
