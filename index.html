@@ -166,9 +166,7 @@
     }
 
     #left_side_menu {
-        flex: 0 0 var(--sidebar-width);
-        min-width: 220px;
-        max-width: var(--sidebar-width);
+        flex: 0 0 auto;
         min-height: 0;
         display: flex;
         flex-direction: column;
@@ -177,7 +175,7 @@
         background: var(--background-secondary);
         color: var(--text-normal);
         flex-shrink: 0;
-        overflow: auto;
+        overflow: hidden;
         border-right: 1px solid var(--border-color);
     }
 
@@ -185,6 +183,7 @@
     #menu_accounts,
     #menu_terminal {
         min-height: 48px;
+        width: 248px;
         display: flex;
         align-items: center;
         padding: 0 14px;
@@ -378,39 +377,81 @@
         }
 
         main {
-            flex-direction: column;
-            overflow: auto;
+            position: relative;
+            flex-direction: row;
+            overflow: hidden;
         }
 
         #left_side_menu {
-            flex: 0 0 auto;
-            min-width: 100%;
-            max-width: 100%;
-            min-height: auto;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        #menu_profile,
-        #menu_accounts,
-        #menu_terminal {
-            flex: 1 1 140px;
-            justify-content: center;
-            min-height: 44px;
-            white-space: nowrap;
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 20;
+            min-height: 0;
         }
 
         #view_profile,
         #view_accounts,
         #view_terminal,
         #login_form {
-            margin: 0 var(--page-padding) var(--page-padding);
+            margin: 0 var(--page-padding) var(--page-padding) 0;
         }
 
         #login_form {
             width: auto;
         }
+
+        main > div:not(#left_side_menu) {
+            margin-left: 81px;
+        }
+    }
+
+    #menu_toggle {
+        min-height: 40px;
+        width: 248px;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        border-radius: var(--border-radius-small);
+        cursor: pointer;
+        user-select: none;
+        transition:
+            background var(--transition-fast),
+            color var(--transition-fast),
+            border-color var(--transition-fast),
+            transform var(--transition-fast);
+        background: var(--background-primary);
+        color: var(--text-normal);
+        border: 1px solid var(--border-color);
+    }
+
+    #menu_toggle:hover {
+        border-color: var(--border-color-active);
+        color: var(--text-active);
+    }
+
+    #menu_toggle:active {
+        transform: translateY(1px);
+    }
+
+    #menu_toggle .icon {
+        margin-right: 0;
+    }
+
+    #left_side_menu.collapsed #menu_profile,
+    #left_side_menu.collapsed #menu_accounts,
+    #left_side_menu.collapsed #menu_terminal,
+    #left_side_menu.collapsed #menu_toggle {
+        width: auto;
+    }
+
+    #left_side_menu.collapsed .menu-label {
+        display: none;
+    }
+
+    #left_side_menu.collapsed .icon {
+        margin-right: 0;
     }
 </style>
 </head>
@@ -518,6 +559,8 @@
             logout.onpointerup = () => {
                 localStorage.removeItem('logged')
                 localStorage.removeItem('left_side_menu')
+                localStorage.removeItem('left_side_collapsed')
+                left_side_menu.classList.remove('collapsed')
                 login_form.hidden = false
                 left_side_menu.hidden = true
                 client_name.hidden = true
@@ -546,7 +589,7 @@
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
-                </svg>Profile
+                </svg><span class="menu-label">Profile</span>
             `
             menuProfile.onpointerup = () => {
                 menu_profile.classList.add('active')
@@ -565,7 +608,7 @@
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                     <line x1="2" y1="10" x2="22" y2="10"/>
-                </svg>Accounts
+                </svg><span class="menu-label">Accounts</span>
             `
             menuAccounts.onpointerup = () => {
                 menu_profile.classList.remove('active')
@@ -585,7 +628,7 @@
                     <line x1="18" y1="20" x2="18" y2="10"/>
                     <line x1="12" y1="20" x2="12" y2="4"/>
                     <line x1="6" y1="20" x2="6" y2="14"/>
-                </svg>Terminal
+                </svg><span class="menu-label">Terminal</span>
             `
             menuTerminal.onpointerup = () => {
                 menu_profile.classList.remove('active')
@@ -600,6 +643,28 @@
                 }
             }
             leftSideMenu.appendChild(menuTerminal)
+
+            let menuToggle = document.createElement('div')
+            menuToggle.id = 'menu_toggle'
+            const renderToggleIcon = collapsed =>
+                menuToggle.innerHTML = `
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${collapsed
+                            ? '<polyline points="9 18 15 12 9 6"/>'
+                            : '<polyline points="15 18 9 12 15 6"/>'}
+                    </svg>
+                `
+
+            menuToggle.onpointerup = () => {
+                let collapsed = !left_side_menu.classList.contains('collapsed')
+                left_side_menu.classList.toggle('collapsed', collapsed)
+                localStorage.left_side_collapsed = collapsed ? 'yes' : 'no'
+                renderToggleIcon(collapsed)
+            }
+            leftSideMenu.appendChild(menuToggle)
+            let initCollapsed = localStorage.left_side_collapsed == 'yes'
+            left_side_menu.classList.toggle('collapsed', initCollapsed)
+            renderToggleIcon(initCollapsed)
         }
         
         const useAdvancedChartWidget = () => {
