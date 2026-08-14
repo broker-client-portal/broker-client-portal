@@ -12,59 +12,31 @@
     }
 
     html {
-        --text-color: #111827;
+        --text-normal: #111827;
         --text-muted: #6b7280;
-        --active-color: #111827;
-        --root-color: #f3f4f6;
-        --header-color: #e5e7eb;
-        --left-side-menu-color: #eef2f7;
-        --surface-color: rgba(255, 255, 255, 0.78);
-        --surface-border: rgba(15, 23, 42, 0.08);
+        --text-active: #111827;
+        --background-primary: #f3f4f6;
+        --background-secondary: #ffffff;
+        --border-color: gray;
+        --border-color-active: dimgray;
+
+        --border-radius-big: 6px;
+        --border-radius-small: 4px;
 
         --page-padding: 16px;
         --header-height: 56px;
         --sidebar-width: 280px;
-        --surface-radius: 16px;
         --transition-fast: 160ms ease;
-
-        --menu-item-bg: rgba(255, 255, 255, 0.52);
-        --menu-item-hover-bg: rgba(255, 255, 255, 0.82);
-        --menu-item-border: rgba(15, 23, 42, 0.08);
-        --menu-active-bg: #ffffff;
-        --menu-active-text: #111827;
-
-        --submenu-bg: rgba(255, 255, 255, 0.5);
-        --submenu-border: rgba(15, 23, 42, 0.08);
-        --submenu-item-hover-bg: rgba(255, 255, 255, 0.72);
-        --submenu-active-bg: #ffffff;
-        --submenu-active-text: #111827;
-
-        --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.22);
     }
 
     html[dark] {
-        --text-color: #f9fafb;
+        --text-normal: #f9fafb;
         --text-muted: #9ca3af;
-        --active-color: #f9fafb;
-        --root-color: #1f2937;
-        --header-color: #111827;
-        --left-side-menu-color: #17202d;
-        --surface-color: rgba(255, 255, 255, 0.05);
-        --surface-border: rgba(255, 255, 255, 0.08);
-
-        --menu-item-bg: rgba(255, 255, 255, 0.04);
-        --menu-item-hover-bg: rgba(255, 255, 255, 0.1);
-        --menu-item-border: rgba(255, 255, 255, 0.08);
-        --menu-active-bg: rgba(255, 255, 255, 0.92);
-        --menu-active-text: #111827;
-
-        --submenu-bg: rgba(255, 255, 255, 0.04);
-        --submenu-border: rgba(255, 255, 255, 0.08);
-        --submenu-item-hover-bg: rgba(255, 255, 255, 0.08);
-        --submenu-active-bg: rgba(255, 255, 255, 0.9);
-        --submenu-active-text: #111827;
-
-        --focus-ring: 0 0 0 3px rgba(96, 165, 250, 0.28);
+        --text-active: #f9fafb;
+        --background-primary: #0F0F0F;
+        --background-secondary: #111827;
+        --border-color: gray;
+        --border-color-active: lightgray;
     }
 
     *,
@@ -82,8 +54,8 @@
 
     body {
         min-height: 100dvh;
-        background: var(--root-color);
-        color: var(--text-color);
+        background: var(--background-primary);
+        color: var(--text-normal);
         font-family: system-ui, sans-serif;
         font-size: clamp(14px, 1rem, 16px);
         line-height: 1.4;
@@ -93,8 +65,8 @@
         min-height: 100dvh;
         display: flex;
         flex-direction: column;
-        background-color: var(--root-color);
-        color: var(--text-color);
+        background-color: var(--background-primary);
+        color: var(--text-normal);
         padding:
             env(safe-area-inset-top)
             env(safe-area-inset-right)
@@ -110,10 +82,10 @@
         align-items: center;
         gap: 12px;
         padding: 12px var(--page-padding);
-        background: var(--header-color);
-        color: var(--text-color);
+        background: var(--background-primary);
+        color: var(--text-normal);
         flex-shrink: 0;
-        border-bottom: 1px solid var(--surface-border);
+        border-bottom: 1px solid var(--border-color);
     }
 
     main {
@@ -121,6 +93,7 @@
         min-height: 0;
         display: flex;
         overflow: hidden;
+        background: var(--background-primary);
     }
 
     #logo {
@@ -131,11 +104,12 @@
         align-items: center;
         justify-content: center;
         padding: 0 14px;
-        border: 1px solid var(--surface-border);
-        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-small);
         font-weight: 700;
         letter-spacing: 0.02em;
-        background: rgba(255, 255, 255, 0.14);
+        background: var(--background-secondary);
+        color: var(--text-active);
     }
 
     #client_name {
@@ -145,9 +119,10 @@
         display: flex;
         align-items: center;
         padding: 0 14px;
-        border: 1px solid var(--surface-border);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-small);
+        background: var(--background-secondary);
+        color: var(--text-normal);
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -160,19 +135,22 @@
         align-items: center;
         justify-content: center;
         padding: 0 14px;
-        border: 1px solid var(--surface-border);
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-small);
+        background: var(--background-secondary);
+        color: var(--text-normal);
         cursor: pointer;
         user-select: none;
         transition:
             background var(--transition-fast),
-            transform var(--transition-fast),
-            opacity var(--transition-fast);
+            color var(--transition-fast),
+            border-color var(--transition-fast),
+            transform var(--transition-fast);
     }
 
     #logout:hover {
-        background: rgba(255, 255, 255, 0.2);
+        border-color: var(--border-color-active);
+        color: var(--text-active);
     }
 
     #logout:active {
@@ -188,11 +166,11 @@
         flex-direction: column;
         gap: 8px;
         padding: var(--page-padding);
-        background: var(--left-side-menu-color);
-        color: var(--text-color);
+        background: var(--background-secondary);
+        color: var(--text-normal);
         flex-shrink: 0;
         overflow: auto;
-        border-right: 1px solid var(--surface-border);
+        border-right: 1px solid var(--border-color);
     }
 
     #menu_profile,
@@ -202,35 +180,32 @@
         display: flex;
         align-items: center;
         padding: 0 14px;
-        border-radius: 12px;
+        border-radius: var(--border-radius-small);
         cursor: pointer;
         user-select: none;
         transition:
             background var(--transition-fast),
             color var(--transition-fast),
+            border-color var(--transition-fast),
             transform var(--transition-fast);
-        background: var(--menu-item-bg);
-        border: 1px solid var(--menu-item-border);
+        background: var(--background-primary);
+        color: var(--text-normal);
+        border: 1px solid var(--border-color);
     }
 
     #menu_profile:hover,
     #menu_accounts:hover,
     #menu_terminal:hover {
-        background: var(--menu-item-hover-bg);
-    }
-
-    #menu_profile:active,
-    #menu_accounts:active,
-    #menu_terminal:active {
-        transform: translateY(1px);
+        border-color: var(--border-color-active);
+        color: var(--text-active);
     }
 
     #menu_profile.active,
     #menu_accounts.active,
     #menu_terminal.active {
-        background: var(--menu-active-bg);
-        color: var(--menu-active-text);
-        border-color: transparent;
+        background: var(--background-secondary);
+        color: var(--text-active);
+        border-color: var(--border-color-active);
         font-weight: 600;
     }
 
@@ -241,26 +216,7 @@
         flex: 1 1 auto;
         min-width: 0;
         min-height: 0;
-        margin: var(--page-padding);
-        padding: 20px;
-        border-radius: var(--surface-radius);
-        background: var(--surface-color);
-        border: 1px solid var(--surface-border);
         overflow: auto;
-        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
-    }
-
-    #view_terminal {
-        position: relative;
-        flex: 1 1 auto;
-        min-width: 0;
-        min-height: 0;
-        margin: var(--page-padding);
-        padding: 0;
-        border: 0;
-        border-radius: var(--surface-radius);
-        background: transparent;
-        overflow: hidden;
         box-shadow: none;
     }
 
@@ -280,44 +236,45 @@
         margin: 0;
         padding: 0 14px;
         font: inherit;
-        color: inherit;
-        border-radius: 12px;
-        border: 1px solid var(--surface-border);
-        background: rgba(255, 255, 255, 0.72);
+        color: var(--text-normal);
+        border-radius: var(--border-radius-small);
+        border: 1px solid var(--border-color);
+        background: var(--background-secondary);
         outline: none;
-    }
-
-    html[dark] #login_login,
-    html[dark] #login_password,
-    html[dark] #login_sumbit {
-        background: rgba(255, 255, 255, 0.06);
     }
 
     #login_login:focus,
     #login_password:focus,
     #login_sumbit:focus {
-        box-shadow: var(--focus-ring);
-        border-color: transparent;
+        border-color: var(--border-color-active);
+        outline: 2px solid var(--border-color-active);
+        outline-offset: 0;
     }
 
     #login_sumbit {
         cursor: pointer;
         font-weight: 600;
-        background: var(--menu-active-bg);
-        color: var(--menu-active-text);
+        color: var(--text-active);
+        border-color: var(--border-color-active);
     }
 
     #login_sumbit:hover {
-        filter: brightness(0.98);
-    }
-
-    #login_sumbit:active {
-        transform: translateY(1px);
+        color: var(--text-active);
     }
 
     .wrong {
-        border-color: #ef4444 !important;
-        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+        border-color: red !important;
+        outline: 2px solid red;
+    }
+
+    .icon {
+        flex: 0 0 auto;
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+        display: block;
+        fill: currentColor;
+        stroke: currentColor;
     }
 
     .info-list {
@@ -340,6 +297,7 @@
         margin: 0;
         font-size: 1rem;
         font-weight: 500;
+        color: var(--text-normal);
     }
 
     @media (max-width: 720px) {
@@ -372,8 +330,6 @@
             flex-direction: row;
             flex-wrap: wrap;
             gap: 10px;
-            border-right: 0;
-            border-bottom: 1px solid var(--surface-border);
         }
 
         #menu_profile,
@@ -396,7 +352,7 @@
             width: auto;
         }
     }
-    </style>
+</style>
 </head>
 <body>
     <div id="root"></div>
@@ -407,7 +363,7 @@
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
             mediaQuery.addEventListener('change', e => {
                 document.documentElement.toggleAttribute('dark', window.dark = e.matches)
-                window.chart?.applyOptions({layout: {background: {color: dark ? '#696969' : '#d3d3d3'}}})
+                useAdvancedChartWidget()
             })
         }
         
@@ -477,7 +433,11 @@
 
             let logo = document.createElement('div')
             logo.id = 'logo'
-            logo.textContent = 'Logo'
+            logo.innerHTML = `
+                <svg viewBox="0 0 64 24" width="64" height="24" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:700;font-family:system-ui,sans-serif;font-size:10px;letter-spacing:0.08em">
+                    <text x="0" y="17">LOGO</text>
+                </svg>
+            `
             header.appendChild(logo)
 
             let clientName = document.createElement('div')
@@ -488,7 +448,13 @@
             let logout = document.createElement('div')
             logout.hidden = true
             logout.id = 'logout'
-            logout.textContent = 'Logout'
+            logout.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>Logout
+            `
             logout.onpointerup = () => {
                 localStorage.removeItem('logged')
                 localStorage.removeItem('left_side_menu')
@@ -509,14 +475,19 @@
         }
         
         const createLeftSideMenu = () => {
-            let leftSideMenu = document.createElement('div')
+            let leftSideMenu = document.createElement('nav')
             leftSideMenu.hidden = true
             leftSideMenu.id = 'left_side_menu'
             main.appendChild(leftSideMenu)
 
             let menuProfile = document.createElement('div')
             menuProfile.id = 'menu_profile'
-            menuProfile.textContent = 'Profile'
+            menuProfile.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>Profile
+            `
             menuProfile.onpointerup = () => {
                 menu_profile.classList.add('active')
                 menu_accounts.classList.remove('active')
@@ -530,7 +501,12 @@
 
             let menuAccounts = document.createElement('div')
             menuAccounts.id = 'menu_accounts'
-            menuAccounts.textContent = 'Accounts'
+            menuAccounts.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>Accounts
+            `
             menuAccounts.onpointerup = () => {
                 menu_profile.classList.remove('active')
                 menu_accounts.classList.add('active')
@@ -544,7 +520,13 @@
             
             let menuTerminal = document.createElement('div')
             menuTerminal.id = 'menu_terminal'
-            menuTerminal.textContent = 'Terminal'
+            menuTerminal.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>Terminal
+            `
             menuTerminal.onpointerup = () => {
                 menu_profile.classList.remove('active')
                 menu_accounts.classList.remove('active')
@@ -553,13 +535,16 @@
                 view_profile.hidden = true
                 view_accounts.hidden = true
                 view_terminal.hidden = false
-                useAdvancedChartWidget({})
+                if (document.getElementsByClassName('tradingview-widget-container').length == 0) {
+                    useAdvancedChartWidget()
+                }
             }
             leftSideMenu.appendChild(menuTerminal)
         }
         
-        const useAdvancedChartWidget = params => {
-            if (document.getElementsByClassName('tradingview-widget-container').length) return
+        const useAdvancedChartWidget = () => {
+            var widget = document.getElementsByClassName('tradingview-widget-container')[0]
+            if (widget) view_terminal.removeChild(widget)
             let tradingviewWidgetContainer = document.createElement('div')
             tradingviewWidgetContainer.classList.add('tradingview-widget-container')
             tradingviewWidgetContainer.style = 'height:100%;width:100%'
@@ -579,22 +564,20 @@
                 "hide_legend": false,
                 "hide_volume": false,
                 "hotlist": true,
-                "interval": "D",
+                "interval": "1",
                 "locale": "en",
                 "save_image": true,
                 "style": "1",
                 "symbol": "Binance:BTCUSDT",
-                "theme": "dark",
+                "theme": dark ? "dark" : "light",
                 "timezone": "Etc/UTC",
-                "backgroundColor": "#0F0F0F",
-                "gridColor": "rgba(242, 242, 242, 0.2)",
+                "backgroundColor": dark ? "#0F0F0F" : "#ffffff",
+                "gridColor": dark ? "rgba(242, 242, 242, 0.2)" : "rgba(46, 46, 46, 0.2)",
                 "watchlist": [],
                 "withdateranges": true,
-                "range": "1D",
                 "compareSymbols": [],
                 "studies": [],
                 "autosize": true,
-                ...params
             })                    
             tradingviewWidgetContainer.appendChild(script)
         }
@@ -721,7 +704,7 @@
             let activeView = document.getElementById('view_' + localStorage.left_side_menu)
             activeView.hidden = false
             left_side_menu.hidden = false
-            if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget({})
+            if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget()
         } else {
             login_form.hidden = false
         }
