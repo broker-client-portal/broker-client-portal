@@ -113,7 +113,9 @@
     }
 
     #client_name {
-        flex: 1 1 auto;
+        flex: 0 1 auto;
+        margin-left: auto;
+        max-width: 40%;
         min-width: 0;
         min-height: 40px;
         display: flex;
@@ -123,6 +125,12 @@
         border-radius: var(--border-radius-small);
         background: var(--background-secondary);
         color: var(--text-normal);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    #client_name span {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -437,7 +445,7 @@
                         currency: 'USD',
                         balance: 10000,
                         leverage: '1:500',
-                        status: 'active'
+                        status: 'Active'
                     },
                     {
                         demo: true,
@@ -445,7 +453,7 @@
                         currency: 'USD',
                         balance: 100000,
                         leverage: '1:500',
-                        status: 'active'
+                        status: 'Active'
                     }
                 ]
             },
@@ -465,7 +473,7 @@
                         currency: 'EUR',
                         balance: 1000,
                         leverage: '1:1',
-                        status: 'disabled'
+                        status: 'Disabled'
                     },
                     {
                         demo: true,
@@ -473,7 +481,7 @@
                         currency: 'EUR',
                         balance: 1000,
                         leverage: '1:1',
-                        status: 'disabled'
+                        status: 'Disabled'
                     }
                 ]
             }
@@ -729,7 +737,12 @@
                     localStorage.logged = login_login.value
                     login_form.hidden = true
                     left_side_menu.hidden = false
-                    client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
+                    client_name.innerHTML = `
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
+                    `
                     client_name.hidden = false
                     profile_first_name.textContent = client.profile.first_name
                     profile_last_name.textContent = client.profile.last_name
@@ -784,7 +797,12 @@
         
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
-            client_name.textContent = client.profile.first_name + ' ' + client.profile.last_name
+            client_name.innerHTML = `
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
+                    `
             client_name.hidden = false
             profile_first_name.textContent = client.profile.first_name
             profile_last_name.textContent = client.profile.last_name
