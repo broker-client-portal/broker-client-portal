@@ -588,8 +588,11 @@
             menuProfile.id = 'menu_profile'
             menuProfile.innerHTML = `
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
+                    <circle cx="8" cy="9" r="3"/>
+                    <path d="M2 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+                    <line x1="16" y1="8" x2="22" y2="8"/>
+                    <line x1="16" y1="12" x2="21" y2="12"/>
+                    <line x1="16" y1="16" x2="20" y2="16"/>
                 </svg><span class="menu-label">Profile</span>
             `
             menuProfile.onpointerup = () => {
