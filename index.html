@@ -228,14 +228,15 @@
         display: grid;
         gap: 16px;
         align-content: center;
+        padding: 32px 0;
     }
 
     #login_login,
     #login_password,
     #login_submit {
-        width: 100%;
+        width: 60%;
         min-height: 48px;
-        margin: 0;
+        margin: 0 20%;
         padding: 0 14px;
         font: inherit;
         color: var(--text-normal);
@@ -393,12 +394,14 @@
             margin: 0 var(--page-padding) var(--page-padding) 0;
         }
 
-        #login_form {
-            width: auto;
+        main > div:not(#left_side_menu):not(#login_form) {
+            margin-left: 80px;
         }
 
-        main > div:not(#left_side_menu) {
-            margin-left: 80px;
+        #login_form {
+            width: 100%;
+            margin: 0 auto !important;
+            padding: 32px var(--page-padding);
         }
     }
 
@@ -862,11 +865,11 @@
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
             client_name.innerHTML = `
-                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
-                    `
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
+            `
             client_name.hidden = false
             profile_first_name.textContent = client.profile.first_name
             profile_last_name.textContent = client.profile.last_name
