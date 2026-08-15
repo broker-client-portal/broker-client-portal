@@ -243,9 +243,9 @@
         padding: 32px var(--page-padding);
     }
 
-    #login_login,
-    #login_password,
-    #login_submit {
+    .login-login,
+    .login-password,
+    .login-submit {
         width: 100%;
         min-height: 42px;
         padding: 0 14px;
@@ -257,22 +257,22 @@
         outline: none;
     }
 
-    #login_login:focus,
-    #login_password:focus,
-    #login_submit:focus {
+    .login-login:focus,
+    .login-password:focus,
+    .login-submit:focus {
         border-color: var(--border-color-active);
         outline: 2px solid var(--border-color-active);
         outline-offset: 0;
     }
 
-    #login_submit {
+    .login-submit {
         cursor: pointer;
         font-weight: 600;
         color: var(--text-active);
         border-color: var(--border-color-active);
     }
 
-    #login_submit:hover {
+    .login-submit:hover {
         color: var(--text-active);
     }
 
@@ -545,6 +545,9 @@
         ]
         
         let loginForm
+        let loginLogin
+        let loginPassword
+        let loginSubmit
 
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
@@ -581,8 +584,8 @@
                 left_side_menu.hidden = true
                 client_name.hidden = true
                 logout.hidden = true
-                login_login.value = ''
-                login_password.value = ''
+                loginLogin.value = ''
+                loginPassword.value = ''
                 view_profile.hidden = true
                 view_accounts.hidden = true
                 view_terminal.hidden = true
@@ -837,12 +840,12 @@
             loginForm.onsubmit = e => {
                 e.preventDefault()
                 let client = db.find(({profile}) =>
-                    profile.login == login_login.value &&
-                    profile.password == login_password.value
+                    profile.login == loginLogin.value &&
+                    profile.password == loginPassword.value
                 )
                 
                 if (client) {
-                    localStorage.logged = login_login.value
+                    localStorage.logged = loginLogin.value
                     loginForm.hidden = true
                     left_side_menu.hidden = false
                     client_name.innerHTML = `
@@ -862,37 +865,37 @@
                     localStorage.left_side_menu = 'profile'
                     view_profile.hidden = false
                 } else {
-                    login_login.classList.add('wrong')
-                    login_password.classList.add('wrong')
+                    loginLogin.classList.add('wrong')
+                    loginPassword.classList.add('wrong')
                 }
             }
             main.appendChild(loginForm)
 
-            let login = document.createElement('input')
-            login.id = 'login_login'
-            login.type = 'text'
-            login.name = 'login'
-            login.placeholder = 'Login'
-            loginForm.appendChild(login)
+            loginLogin = document.createElement('input')
+            loginLogin.className = 'login-login'
+            loginLogin.type = 'text'
+            loginLogin.name = 'login'
+            loginLogin.placeholder = 'Login'
+            loginForm.appendChild(loginLogin)
 
-            let password = document.createElement('input')
-            password.id = 'login_password'
-            password.type = 'password'
-            password.name = 'password'
-            password.placeholder = 'Password'
-            loginForm.appendChild(password)
+            loginPassword = document.createElement('input')
+            loginPassword.className = 'login-password'
+            loginPassword.type = 'password'
+            loginPassword.name = 'password'
+            loginPassword.placeholder = 'Password'
+            loginForm.appendChild(loginPassword)
             
-            login.onfocus =
-            password.onfocus = () => {
-                login_login.classList.remove('wrong')
-                login_password.classList.remove('wrong')
+            loginLogin.onfocus =
+            loginPassword.onfocus = () => {
+                loginLogin.classList.remove('wrong')
+                loginPassword.classList.remove('wrong')
             }
 
-            const submit = document.createElement('input')
-            submit.id = 'login_submit'
-            submit.type = 'submit'
-            submit.value = 'Enter'
-            loginForm.appendChild(submit)
+            loginSubmit = document.createElement('input')
+            loginSubmit.className = 'login-submit'
+            loginSubmit.type = 'submit'
+            loginSubmit.value = 'Enter'
+            loginForm.appendChild(loginSubmit)
         }
 
         createTopHeaderNavbar()
