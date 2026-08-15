@@ -408,12 +408,13 @@
         }
     }
 
+    #menu_theme,
     #menu_toggle {
         min-height: 40px;
         width: 248px;
         display: flex;
         align-items: center;
-        margin-top: auto;
+        gap: 8px;
         padding: 0 14px;
         border-radius: var(--border-radius-small);
         cursor: pointer;
@@ -428,15 +429,22 @@
         border: 1px solid var(--border-color);
     }
 
+    #menu_theme {
+        margin-top: auto;
+    }
+
+    #menu_theme:hover,
     #menu_toggle:hover {
         border-color: var(--border-color-active);
         color: var(--text-active);
     }
 
+    #menu_theme:active,
     #menu_toggle:active {
         transform: translateY(1px);
     }
 
+    #menu_theme .icon,
     #menu_toggle .icon {
         margin-right: 0;
     }
@@ -444,6 +452,7 @@
     #left_side_menu.collapsed #menu_profile,
     #left_side_menu.collapsed #menu_accounts,
     #left_side_menu.collapsed #menu_terminal,
+    #left_side_menu.collapsed #menu_theme,
     #left_side_menu.collapsed #menu_toggle {
         width: auto;
     }
@@ -462,11 +471,14 @@
     <script>
         let version = 2
 
-        window.dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+        window.dark = !localStorage.theme || localStorage.theme == 0
+            ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
+            : localStorage.theme == 2
         document.documentElement.toggleAttribute('dark', window.dark)
         if (window.matchMedia) {
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+            let mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
             mediaQuery.addEventListener('change', e => {
+                if (localStorage.theme != 0) return
                 document.documentElement.toggleAttribute('dark', window.dark = e.matches)
                 useAdvancedChartWidget()
             })
@@ -540,7 +552,7 @@
             logo.id = 'logo'
             logo.innerHTML = `
                 <svg viewBox="0 0 96 40" width="96" height="40" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:800;font-family:system-ui,sans-serif;font-size:18px;letter-spacing:0.04em">
-                    <text x="48" y="26" text-anchor="middle" transform="rotate(-3 48 22)">Broker</text>
+                    <text x="48" y="26" text-anchor="middle">Broker</text>
                 </svg>
             `
             header.appendChild(logo)
@@ -648,6 +660,30 @@
                 }
             }
             leftSideMenu.appendChild(menuTerminal)
+
+            let menuTheme = document.createElement('div')
+            menuTheme.id = 'menu_theme'
+            const renderTheme = option =>
+                menuTheme.innerHTML = option == 0
+                    ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/></svg><span class="menu-label">OS Default</span>`
+                    : option == 1
+                    ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="menu-label">Light</span>`
+                    : `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg><span class="menu-label">Dark</span>`
+            menuTheme.onclick = () => {
+                localStorage.theme = localStorage.theme 
+                    ? (1 + +localStorage.theme) % 3
+                    : 1
+                renderTheme(localStorage.theme)
+                let willBeDark = localStorage.theme == 0
+                    ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
+                    : localStorage.theme == 2
+                if (willBeDark == window.dark) return
+                window.dark = willBeDark
+                document.documentElement.toggleAttribute('dark', window.dark)
+                useAdvancedChartWidget()
+            }
+            renderTheme(localStorage.theme || 0)
+            leftSideMenu.appendChild(menuTheme)
 
             let menuToggle = document.createElement('div')
             menuToggle.id = 'menu_toggle'
