@@ -548,6 +548,10 @@
         let loginLogin
         let loginPassword
         let loginSubmit
+        let profileFirstName
+        let profileLastName
+        let profileEmail
+        let profileCountry
 
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
@@ -802,23 +806,27 @@
                     <dl class="info-list">
                         <div class="info-item">
                             <dt>First Name</dt>
-                            <dd id="profile_first_name"></dd>
+                            <dd class="profile-first-name"></dd>
                         </div>
                         <div class="info-item">
                             <dt>Last Name</dt>
-                            <dd id="profile_last_name"></dd>
+                            <dd class="profile-last-name"></dd>
                         </div>
                         <div class="info-item">
                             <dt>Email</dt>
-                            <dd id="profile_email"></dd>
+                            <dd class="profile-email"></dd>
                         </div>
                         <div class="info-item">
                             <dt>Country</dt>
-                            <dd id="profile_country"></dd>
+                            <dd class="profile-country"></dd>
                         </div>
                     </dl>
                 </section>`
             main.appendChild(viewProfile)
+            profileFirstName = viewProfile.getElementsByClassName('profile-first-name')[0]
+            profileLastName = viewProfile.getElementsByClassName('profile-last-name')[0]
+            profileEmail = viewProfile.getElementsByClassName('profile-email')[0]
+            profileCountry = viewProfile.getElementsByClassName('profile-country')[0]
 
             let viewAccounts = document.createElement('div')
             viewAccounts.hidden = true
@@ -855,10 +863,10 @@
                         </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
                     `
                     client_name.hidden = false
-                    profile_first_name.textContent = client.profile.first_name
-                    profile_last_name.textContent = client.profile.last_name
-                    profile_email.textContent = client.profile.email
-                    profile_country.textContent = client.profile.country
+                    profileFirstName.textContent = client.profile.first_name
+                    profileLastName.textContent = client.profile.last_name
+                    profileEmail.textContent = client.profile.email
+                    profileCountry.textContent = client.profile.country
                     renderAccounts(client.accounts)
                     logout.hidden = false
                     menu_profile.classList.add('active')
@@ -923,10 +931,10 @@
                 </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
             `
             client_name.hidden = false
-            profile_first_name.textContent = client.profile.first_name
-            profile_last_name.textContent = client.profile.last_name
-            profile_email.textContent = client.profile.email
-            profile_country.textContent = client.profile.country
+            profileFirstName.textContent = client.profile.first_name
+            profileLastName.textContent = client.profile.last_name
+            profileEmail.textContent = client.profile.email
+            profileCountry.textContent = client.profile.country
             renderAccounts(client.accounts)
             logout.hidden = false
             let activeMenu = document.getElementById('menu_' + localStorage.left_side_menu)
