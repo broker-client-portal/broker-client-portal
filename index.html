@@ -111,7 +111,7 @@
         color: var(--text-active);
     }
 
-    #client_name {
+    .client-name {
         flex: 0 1 auto;
         margin-left: auto;
         max-width: 40%;
@@ -129,7 +129,7 @@
         text-overflow: ellipsis;
     }
 
-    #client_name span {
+    .client-name span {
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
@@ -376,7 +376,7 @@
             padding: 0 10px;
         }
 
-        #client_name {
+        .client-name {
             min-height: 44px;
             flex: 1 1 auto;
             min-width: 0;
@@ -553,6 +553,8 @@
         let profileEmail
         let profileCountry
         let logout
+        let clientName
+        let clientNameText
 
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
@@ -567,10 +569,17 @@
             `
             header.appendChild(logo)
 
-            let clientName = document.createElement('div')
+            clientName = document.createElement('div')
             clientName.hidden = true
-            clientName.id = 'client_name'
+            clientName.className = 'client-name'
+            clientName.innerHTML = `
+                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg><span></span>
+            `
             header.appendChild(clientName)
+            clientNameText = clientName.getElementsByTagName('span')[0]
             
             logout = document.createElement('div')
             logout.hidden = true
@@ -587,7 +596,7 @@
                 localStorage.removeItem('left_side_menu')
                 loginForm.hidden = false
                 left_side_menu.hidden = true
-                client_name.hidden = true
+                clientName.hidden = true
                 logout.hidden = true
                 loginLogin.value = ''
                 loginPassword.value = ''
@@ -857,13 +866,8 @@
                     localStorage.logged = loginLogin.value
                     loginForm.hidden = true
                     left_side_menu.hidden = false
-                    client_name.innerHTML = `
-                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
-                    `
-                    client_name.hidden = false
+                    clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
+                    clientName.hidden = false
                     profileFirstName.textContent = client.profile.first_name
                     profileLastName.textContent = client.profile.last_name
                     profileEmail.textContent = client.profile.email
@@ -909,7 +913,6 @@
 
         createTopHeaderNavbar()
         let main = document.createElement('main')
-        main.id = 'main'
         root.appendChild(main)
         createLeftSideMenu()
         createViews()
@@ -925,13 +928,8 @@
 
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
-            client_name.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg><span>${client.profile.first_name} ${client.profile.last_name}</span>
-            `
-            client_name.hidden = false
+            clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
+            clientName.hidden = false
             profileFirstName.textContent = client.profile.first_name
             profileLastName.textContent = client.profile.last_name
             profileEmail.textContent = client.profile.email
