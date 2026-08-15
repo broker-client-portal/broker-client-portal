@@ -561,8 +561,6 @@
             logout.onpointerup = () => {
                 localStorage.removeItem('logged')
                 localStorage.removeItem('left_side_menu')
-                localStorage.removeItem('left_side_collapsed')
-                left_side_menu.classList.remove('collapsed')
                 login_form.hidden = false
                 left_side_menu.hidden = true
                 client_name.hidden = true
@@ -854,7 +852,7 @@
             submit.id = 'login_submit'
             submit.type = 'submit'
             submit.value = 'Enter'
-            form.appendChild(submit)            
+            form.appendChild(submit)
         }
 
         createTopHeaderNavbar()
