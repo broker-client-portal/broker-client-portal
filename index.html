@@ -135,7 +135,7 @@
         text-overflow: ellipsis;
     }
 
-    #logout {
+    .logout {
         flex: 0 0 auto;
         min-height: 40px;
         display: inline-flex;
@@ -155,12 +155,12 @@
             transform var(--transition-fast);
     }
 
-    #logout:hover {
+    .logout:hover {
         border-color: var(--border-color-active);
         color: var(--text-active);
     }
 
-    #logout:active {
+    .logout:active {
         transform: translateY(1px);
     }
 
@@ -363,7 +363,7 @@
 
     @media (max-width: 720px) {
         #logo,
-        #logout {
+        .logout {
             min-height: 44px;
         }
 
@@ -372,7 +372,7 @@
             padding: 0 10px;
         }
 
-        #logout {
+        .logout {
             padding: 0 10px;
         }
 
@@ -552,6 +552,7 @@
         let profileLastName
         let profileEmail
         let profileCountry
+        let logout
 
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
@@ -571,9 +572,9 @@
             clientName.id = 'client_name'
             header.appendChild(clientName)
             
-            let logout = document.createElement('div')
+            logout = document.createElement('div')
             logout.hidden = true
-            logout.id = 'logout'
+            logout.className = 'logout'
             logout.innerHTML = `
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
