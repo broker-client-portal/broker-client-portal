@@ -45,6 +45,10 @@
         box-sizing: border-box;
     }
 
+    html, body, #root {
+        height: 100%;
+    }
+
     html,
     body {
         margin: 0;
@@ -62,7 +66,7 @@
     }
 
     #root {
-        min-height: 100dvh;
+        height: 100dvh;
         display: flex;
         flex-direction: column;
         background-color: var(--background-primary);
@@ -212,9 +216,16 @@
     }
 
     #view_profile,
-    #view_accounts,
     #view_terminal,
     #login_form {
+        flex: 1 1 auto;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+        box-shadow: none;
+    }
+
+    #view_accounts {
         flex: 1 1 auto;
         min-width: 0;
         min-height: 0;
@@ -386,18 +397,11 @@
             z-index: 20;
             min-height: 0;
         }
-
-        #view_profile,
-        #view_accounts,
-        #view_terminal,
-        #login_form {
-            margin: 0 var(--page-padding) var(--page-padding) 0;
-        }
-
+        
         main > div:not(#left_side_menu):not(#login_form) {
             margin-left: 80px;
         }
-
+        
         #login_form {
             width: 100%;
             margin: 0 auto !important;
@@ -535,7 +539,7 @@
             logo.id = 'logo'
             logo.innerHTML = `
                 <svg viewBox="0 0 96 40" width="96" height="40" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:800;font-family:system-ui,sans-serif;font-size:18px;letter-spacing:0.04em">
-                    <text x="48" y="26" text-anchor="middle" transform="rotate(-24 48 22)">Broker</text>
+                    <text x="48" y="26" text-anchor="middle" transform="rotate(-3 48 22)">Broker</text>
                 </svg>
             `
             header.appendChild(logo)
