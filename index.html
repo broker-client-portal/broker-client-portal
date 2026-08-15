@@ -216,7 +216,7 @@
     }
 
     #view_terminal,
-    #login_form {
+    .login-form {
         flex: 1 1 auto;
         min-width: 0;
         min-height: 0;
@@ -233,7 +233,7 @@
         box-shadow: none;
     }
 
-    #login_form {
+    .login-form {
         flex: 0 0 auto;
         width: min(100%, 320px);
         margin: auto;
@@ -397,11 +397,11 @@
             min-height: 0;
         }
         
-        main > div:not(#left_side_menu):not(#login_form) {
+        main > div:not(#left_side_menu):not(.login-form) {
             margin-left: 80px;
         }
         
-        #login_form {
+        .login-form {
             width: min(100%, 360px);
             margin: 0 auto;
             padding: 32px var(--page-padding);
@@ -544,6 +544,8 @@
             }
         ]
         
+        let loginForm
+
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
             root.appendChild(header)
@@ -575,7 +577,7 @@
             logout.onclick = () => {
                 localStorage.removeItem('logged')
                 localStorage.removeItem('left_side_menu')
-                login_form.hidden = false
+                loginForm.hidden = false
                 left_side_menu.hidden = true
                 client_name.hidden = true
                 logout.hidden = true
@@ -827,12 +829,12 @@
         }
 
         const createLoginForm = () => {
-            let form = document.createElement('form')
-            form.hidden = true
-            form.id = 'login_form'
-            form.method = 'POST'
-            form.action = '#'
-            form.onsubmit = e => {
+            loginForm = document.createElement('form')
+            loginForm.className = 'login-form'
+            loginForm.hidden = true
+            loginForm.method = 'POST'
+            loginForm.action = '#'
+            loginForm.onsubmit = e => {
                 e.preventDefault()
                 let client = db.find(({profile}) =>
                     profile.login == login_login.value &&
@@ -841,7 +843,7 @@
                 
                 if (client) {
                     localStorage.logged = login_login.value
-                    login_form.hidden = true
+                    loginForm.hidden = true
                     left_side_menu.hidden = false
                     client_name.innerHTML = `
                         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -864,21 +866,21 @@
                     login_password.classList.add('wrong')
                 }
             }
-            main.appendChild(form)
+            main.appendChild(loginForm)
 
             let login = document.createElement('input')
             login.id = 'login_login'
             login.type = 'text'
             login.name = 'login'
             login.placeholder = 'Login'
-            form.appendChild(login)
+            loginForm.appendChild(login)
 
             let password = document.createElement('input')
             password.id = 'login_password'
             password.type = 'password'
             password.name = 'password'
             password.placeholder = 'Password'
-            form.appendChild(password)
+            loginForm.appendChild(password)
             
             login.onfocus =
             password.onfocus = () => {
@@ -890,7 +892,7 @@
             submit.id = 'login_submit'
             submit.type = 'submit'
             submit.value = 'Enter'
-            form.appendChild(submit)
+            loginForm.appendChild(submit)
         }
 
         createTopHeaderNavbar()
@@ -931,7 +933,7 @@
             left_side_menu.hidden = false
             if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget()
         } else {
-            login_form.hidden = false
+            loginForm.hidden = false
         }
     </script>
 </body>
