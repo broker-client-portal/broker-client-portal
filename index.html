@@ -460,6 +460,8 @@
 <body>
     <div id="root"></div>
     <script>
+        let version = 2
+
         window.dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
         document.documentElement.toggleAttribute('dark', window.dark)
         if (window.matchMedia) {
@@ -863,6 +865,14 @@
         createViews()
         createLoginForm()
         
+        if (localStorage.version != version) {
+            localStorage.version = version
+            // Force user inteface to login again
+            // If there major braking changes bump version for ensure logout behavior
+            localStorage.removeItem('logged')
+            // Here is a place for state migration logic 
+        }
+
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
             client_name.innerHTML = `
