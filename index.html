@@ -215,7 +215,7 @@
         font-weight: 600;
     }
 
-    #view_terminal,
+    .view-terminal,
     .login-form {
         flex: 1 1 auto;
         min-width: 0;
@@ -224,8 +224,8 @@
         box-shadow: none;
     }
 
-    #view_profile,
-    #view_accounts {
+    .view-profile,
+    .view-accounts {
         flex: 1 1 auto;
         min-width: 0;
         min-height: 0;
@@ -555,6 +555,9 @@
         let logout
         let clientName
         let clientNameText
+        let viewProfile
+        let viewAccounts
+        let viewTerminal
 
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
@@ -600,9 +603,9 @@
                 logout.hidden = true
                 loginLogin.value = ''
                 loginPassword.value = ''
-                view_profile.hidden = true
-                view_accounts.hidden = true
-                view_terminal.hidden = true
+                viewProfile.hidden = true
+                viewAccounts.hidden = true
+                viewTerminal.hidden = true
                 menu_profile.classList.remove('active')
                 menu_accounts.classList.remove('active')
                 menu_terminal.classList.remove('active')
@@ -632,9 +635,9 @@
                 menu_accounts.classList.remove('active')
                 menu_terminal.classList.remove('active')
                 localStorage.left_side_menu = 'profile'
-                view_profile.hidden = false
-                view_accounts.hidden = true
-                view_terminal.hidden = true
+                viewProfile.hidden = false
+                viewAccounts.hidden = true
+                viewTerminal.hidden = true
             }
             leftSideMenu.appendChild(menuProfile)
 
@@ -651,9 +654,9 @@
                 menu_accounts.classList.add('active')
                 menu_terminal.classList.remove('active')
                 localStorage.left_side_menu = 'accounts'
-                view_profile.hidden = true
-                view_accounts.hidden = false
-                view_terminal.hidden = true
+                viewProfile.hidden = true
+                viewAccounts.hidden = false
+                viewTerminal.hidden = true
             }
             leftSideMenu.appendChild(menuAccounts)
             
@@ -671,9 +674,9 @@
                 menu_accounts.classList.remove('active')
                 menu_terminal.classList.add('active')
                 localStorage.left_side_menu = 'terminal'
-                view_profile.hidden = true
-                view_accounts.hidden = true
-                view_terminal.hidden = false
+                viewProfile.hidden = true
+                viewAccounts.hidden = true
+                viewTerminal.hidden = false
                 if (document.getElementsByClassName('tradingview-widget-container').length == 0) {
                     useAdvancedChartWidget()
                 }
@@ -729,14 +732,14 @@
         
         const useAdvancedChartWidget = () => {
             var widget = document.getElementsByClassName('tradingview-widget-container')[0]
-            if (widget) view_terminal.removeChild(widget)
+            if (widget) viewTerminal.removeChild(widget)
             let tradingviewWidgetContainer = document.createElement('div')
             tradingviewWidgetContainer.classList.add('tradingview-widget-container')
             tradingviewWidgetContainer.style = 'height:100%;width:100%'
             tradingviewWidgetContainer.innerHTML = `
                 <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
             `
-            view_terminal.appendChild(tradingviewWidgetContainer)
+            viewTerminal.appendChild(tradingviewWidgetContainer)
             let script = document.createElement('script')
             script.type = 'text/javascript'
             script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js'
@@ -767,7 +770,7 @@
             tradingviewWidgetContainer.appendChild(script)
         }
         const renderAccounts = accounts => {
-            view_accounts.innerHTML = ''
+            viewAccounts.innerHTML = ''
             let section = document.createElement('section')
             section.className = 'view-section'
             section.innerHTML = `<h2>Accounts</h2>`
@@ -803,15 +806,15 @@
                 grid.appendChild(card)
             })
             section.appendChild(grid)
-            view_accounts.appendChild(section)
+            viewAccounts.appendChild(section)
         }
         
         const createViews = () => {
-            let viewProfile = document.createElement('div')
+            viewProfile = document.createElement('div')
             viewProfile.hidden = true
-            viewProfile.id = 'view_profile'
+            viewProfile.clsssName = 'view-profile'
             viewProfile.innerHTML = `
-                <section class="view-section" aria-labelledby="personal-info">
+                <section class="view-section">
                     <h2 id="personal-info">Personal Information</h2>
                     <dl class="info-list">
                         <div class="info-item">
@@ -838,14 +841,14 @@
             profileEmail = viewProfile.getElementsByClassName('profile-email')[0]
             profileCountry = viewProfile.getElementsByClassName('profile-country')[0]
 
-            let viewAccounts = document.createElement('div')
+            viewAccounts = document.createElement('div')
             viewAccounts.hidden = true
-            viewAccounts.id = 'view_accounts'
+            viewAccounts.className = 'view-accounts'
             main.appendChild(viewAccounts)
             
-            let viewTerminal = document.createElement('div')
+            viewTerminal = document.createElement('div')
             viewTerminal.hidden = true
-            viewTerminal.id = 'view_terminal'
+            viewTerminal.className = 'view-terminal'
             main.appendChild(viewTerminal)
         }
 
@@ -876,7 +879,7 @@
                     logout.hidden = false
                     menu_profile.classList.add('active')
                     localStorage.left_side_menu = 'profile'
-                    view_profile.hidden = false
+                    viewProfile.hidden = false
                 } else {
                     loginLogin.classList.add('wrong')
                     loginPassword.classList.add('wrong')
@@ -938,7 +941,12 @@
             logout.hidden = false
             let activeMenu = document.getElementById('menu_' + localStorage.left_side_menu)
             activeMenu.classList.add('active')
-            let activeView = document.getElementById('view_' + localStorage.left_side_menu)
+            let views = {
+                profile: viewProfile,
+                accounts: viewAccounts,
+                terminal: viewTerminal
+            }
+            let activeView = views[localStorage.left_side_menu]
             activeView.hidden = false
             left_side_menu.hidden = false
             if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget()
