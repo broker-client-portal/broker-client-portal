@@ -616,100 +616,53 @@
         }
         
         const createLeftSideMenu = () => {
-            nav = document.createElement('nav')
-            nav.hidden = true
-            main.appendChild(nav)
-
-            menuProfile = document.createElement('div')
-            menuProfile.className = 'menu-profile'
-            menuProfile.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="8" cy="9" r="3"/>
-                    <path d="M2 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
-                    <line x1="16" y1="8" x2="22" y2="8"/>
-                    <line x1="16" y1="12" x2="21" y2="12"/>
-                    <line x1="16" y1="16" x2="20" y2="16"/>
-                </svg><span class="menu-label">Profile</span>
+            let collapsed = localStorage.left_side_collapsed == 'yes'
+            main.innerHTML = `
+                <nav class="${collapsed ? 'collapsed' : ''}" hidden>
+                    <div class="menu-profile">
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="8" cy="9" r="3"/>
+                            <path d="M2 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+                            <line x1="16" y1="8" x2="22" y2="8"/>
+                            <line x1="16" y1="12" x2="21" y2="12"/>
+                            <line x1="16" y1="16" x2="20" y2="16"/>
+                        </svg>
+                        <span class="menu-label">Profile</span>
+                    </div>
+                    <div class="menu-accounts">
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="5" width="20" height="14" rx="2"/>
+                            <line x1="2" y1="10" x2="22" y2="10"/>
+                        </svg>
+                        <span class="menu-label">Accounts</span>
+                    </div>
+                    <div class="menu-terminal">
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="20" x2="18" y2="10"/>
+                            <line x1="12" y1="20" x2="12" y2="4"/>
+                            <line x1="6" y1="20" x2="6" y2="14"/>
+                        </svg>
+                        <span class="menu-label">Terminal</span>
+                    </div>
+                    <div class="menu-theme"></div>
+                    <div class="menu-toggle"></div>
+                </nav>
             `
-            menuProfile.onclick = () => {
-                menuProfile.classList.add('active')
-                menuAccounts.classList.remove('active')
-                menuTerminal.classList.remove('active')
-                localStorage.nav = 'profile'
-                viewProfile.hidden = false
-                viewAccounts.hidden = true
-                viewTerminal.hidden = true
-            }
-            nav.appendChild(menuProfile)
+            nav = main.getElementsByTagName('nav')[0]
+            menuProfile = nav.getElementsByClassName('menu-profile')[0]
+            menuAccounts = nav.getElementsByClassName('menu-accounts')[0]
+            menuTerminal = nav.getElementsByClassName('menu-terminal')[0]
+            menuTheme = nav.getElementsByClassName('menu-theme')[0]
+            menuToggle = nav.getElementsByClassName('menu-toggle')[0]
 
-            menuAccounts = document.createElement('div')
-            menuAccounts.className = 'menu-accounts'
-            menuAccounts.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="5" width="20" height="14" rx="2"/>
-                    <line x1="2" y1="10" x2="22" y2="10"/>
-                </svg><span class="menu-label">Accounts</span>
-            `
-            menuAccounts.onclick = () => {
-                menuProfile.classList.remove('active')
-                menuAccounts.classList.add('active')
-                menuTerminal.classList.remove('active')
-                localStorage.nav = 'accounts'
-                viewProfile.hidden = true
-                viewAccounts.hidden = false
-                viewTerminal.hidden = true
-            }
-            nav.appendChild(menuAccounts)
-            
-            menuTerminal = document.createElement('div')
-            menuTerminal.className = 'menu-terminal'
-            menuTerminal.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/>
-                    <line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6" y1="20" x2="6" y2="14"/>
-                </svg><span class="menu-label">Terminal</span>
-            `
-            menuTerminal.onclick = () => {
-                menuProfile.classList.remove('active')
-                menuAccounts.classList.remove('active')
-                menuTerminal.classList.add('active')
-                localStorage.nav = 'terminal'
-                viewProfile.hidden = true
-                viewAccounts.hidden = true
-                viewTerminal.hidden = false
-                if (document.getElementsByClassName('tradingview-widget-container').length == 0) {
-                    useAdvancedChartWidget()
-                }
-            }
-            nav.appendChild(menuTerminal)
-
-            menuTheme = document.createElement('div')
-            menuTheme.className = 'menu-theme'
-            const renderTheme = option =>
+            const renderThemeControls = option =>
                 menuTheme.innerHTML = option == 0
                     ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/></svg><span class="menu-label">OS Default</span>`
                     : option == 1
                     ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="menu-label">Light</span>`
                     : `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg><span class="menu-label">Dark</span>`
-            menuTheme.onclick = () => {
-                localStorage.theme = localStorage.theme 
-                    ? (1 + +localStorage.theme) % 3
-                    : 1
-                renderTheme(localStorage.theme)
-                let willBeDark = localStorage.theme == 0
-                    ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
-                    : localStorage.theme == 2
-                if (willBeDark == window.dark) return
-                window.dark = willBeDark
-                document.documentElement.toggleAttribute('dark', window.dark)
-                useAdvancedChartWidget()
-            }
-            renderTheme(localStorage.theme || 0)
-            nav.appendChild(menuTheme)
+            renderThemeControls(localStorage.theme || 0)
 
-            menuToggle = document.createElement('div')
-            menuToggle.className = 'menu-toggle'
             const renderToggleIcon = collapsed =>
                 menuToggle.innerHTML = `
                     <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -718,17 +671,57 @@
                             : '<polyline points="15 18 9 12 15 6"/>'}
                     </svg>
                 `
-
+            renderToggleIcon(collapsed)
+            
+            menuProfile.onclick = () => {
+                menuProfile.classList.add('active')
+                menuAccounts.classList.remove('active')
+                menuTerminal.classList.remove('active')
+                viewProfile.hidden = false
+                viewAccounts.hidden = true
+                viewTerminal.hidden = true
+                localStorage.nav = 'profile'
+            }
+            menuAccounts.onclick = () => {
+                menuProfile.classList.remove('active')
+                menuAccounts.classList.add('active')
+                menuTerminal.classList.remove('active')
+                viewProfile.hidden = true
+                viewAccounts.hidden = false
+                viewTerminal.hidden = true
+                localStorage.nav = 'accounts'
+            }
+            menuTerminal.onclick = () => {
+                menuProfile.classList.remove('active')
+                menuAccounts.classList.remove('active')
+                menuTerminal.classList.add('active')
+                viewProfile.hidden = true
+                viewAccounts.hidden = true
+                viewTerminal.hidden = false
+                localStorage.nav = 'terminal'
+                if (document.getElementsByClassName('tradingview-widget-container').length == 0) {
+                    useAdvancedChartWidget()
+                }
+            }
+            menuTheme.onclick = () => {
+                localStorage.theme = localStorage.theme 
+                    ? (1 + +localStorage.theme) % 3
+                    : 1
+                renderThemeControls(localStorage.theme)
+                let willBeDark = localStorage.theme == 0
+                    ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
+                    : localStorage.theme == 2
+                if (willBeDark == window.dark) return
+                window.dark = willBeDark
+                document.documentElement.toggleAttribute('dark', window.dark)
+                useAdvancedChartWidget()
+            }
             menuToggle.onclick = () => {
                 let collapsed = !nav.classList.contains('collapsed')
                 nav.classList.toggle('collapsed', collapsed)
                 localStorage.left_side_collapsed = collapsed ? 'yes' : 'no'
                 renderToggleIcon(collapsed)
             }
-            nav.appendChild(menuToggle)
-            let initCollapsed = localStorage.left_side_collapsed == 'yes'
-            nav.classList.toggle('collapsed', initCollapsed)
-            renderToggleIcon(initCollapsed)
         }
         
         const useAdvancedChartWidget = () => {
