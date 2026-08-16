@@ -164,7 +164,7 @@
         transform: translateY(1px);
     }
 
-    #left_side_menu {
+    nav {
         flex: 0 0 auto;
         min-height: 0;
         display: flex;
@@ -388,7 +388,7 @@
             overflow: hidden;
         }
 
-        #left_side_menu {
+        nav {
             position: absolute;
             left: 0;
             top: 0;
@@ -397,7 +397,10 @@
             min-height: 0;
         }
         
-        main > div:not(#left_side_menu):not(.login-form) {
+        .view-profile,
+        .view-accounts,
+        .view-terminal
+        {
             margin-left: 80px;
         }
         
@@ -449,19 +452,19 @@
         margin-right: 0;
     }
 
-    #left_side_menu.collapsed .menu-profile,
-    #left_side_menu.collapsed .menu-accounts,
-    #left_side_menu.collapsed .menu-terminal,
-    #left_side_menu.collapsed .menu-theme,
-    #left_side_menu.collapsed .menu-toggle {
+    nav.collapsed .menu-profile,
+    nav.collapsed .menu-accounts,
+    nav.collapsed .menu-terminal,
+    nav.collapsed .menu-theme,
+    nav.collapsed .menu-toggle {
         width: auto;
     }
 
-    #left_side_menu.collapsed .menu-label {
+    nav.collapsed .menu-label {
         display: none;
     }
 
-    #left_side_menu.collapsed .icon {
+    nav.collapsed .icon {
         margin-right: 0;
     }
 </style>
@@ -469,7 +472,7 @@
 <body>
     <div id="root"></div>
     <script>
-        let version = 2
+        let version = 3
 
         window.dark = !localStorage.theme || localStorage.theme == 0
             ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
@@ -563,7 +566,8 @@
         let menuTerminal
         let menuTheme
         let menuToggle
-        
+        let nav
+
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
             root.appendChild(header)
@@ -601,9 +605,8 @@
             `
             logout.onclick = () => {
                 localStorage.removeItem('logged')
-                localStorage.removeItem('left_side_menu')
                 loginForm.hidden = false
-                left_side_menu.hidden = true
+                nav.hidden = true
                 clientName.hidden = true
                 logout.hidden = true
                 loginLogin.value = ''
@@ -619,10 +622,9 @@
         }
         
         const createLeftSideMenu = () => {
-            let leftSideMenu = document.createElement('nav')
-            leftSideMenu.hidden = true
-            leftSideMenu.id = 'left_side_menu'
-            main.appendChild(leftSideMenu)
+            nav = document.createElement('nav')
+            nav.hidden = true
+            main.appendChild(nav)
 
             menuProfile = document.createElement('div')
             menuProfile.className = 'menu-profile'
@@ -639,12 +641,12 @@
                 menuProfile.classList.add('active')
                 menuAccounts.classList.remove('active')
                 menuTerminal.classList.remove('active')
-                localStorage.left_side_menu = 'profile'
+                localStorage.nav = 'profile'
                 viewProfile.hidden = false
                 viewAccounts.hidden = true
                 viewTerminal.hidden = true
             }
-            leftSideMenu.appendChild(menuProfile)
+            nav.appendChild(menuProfile)
 
             menuAccounts = document.createElement('div')
             menuAccounts.className = 'menu-accounts'
@@ -658,12 +660,12 @@
                 menuProfile.classList.remove('active')
                 menuAccounts.classList.add('active')
                 menuTerminal.classList.remove('active')
-                localStorage.left_side_menu = 'accounts'
+                localStorage.nav = 'accounts'
                 viewProfile.hidden = true
                 viewAccounts.hidden = false
                 viewTerminal.hidden = true
             }
-            leftSideMenu.appendChild(menuAccounts)
+            nav.appendChild(menuAccounts)
             
             menuTerminal = document.createElement('div')
             menuTerminal.className = 'menu-terminal'
@@ -678,7 +680,7 @@
                 menuProfile.classList.remove('active')
                 menuAccounts.classList.remove('active')
                 menuTerminal.classList.add('active')
-                localStorage.left_side_menu = 'terminal'
+                localStorage.nav = 'terminal'
                 viewProfile.hidden = true
                 viewAccounts.hidden = true
                 viewTerminal.hidden = false
@@ -686,7 +688,7 @@
                     useAdvancedChartWidget()
                 }
             }
-            leftSideMenu.appendChild(menuTerminal)
+            nav.appendChild(menuTerminal)
 
             menuTheme = document.createElement('div')
             menuTheme.className = 'menu-theme'
@@ -710,7 +712,7 @@
                 useAdvancedChartWidget()
             }
             renderTheme(localStorage.theme || 0)
-            leftSideMenu.appendChild(menuTheme)
+            nav.appendChild(menuTheme)
 
             menuToggle = document.createElement('div')
             menuToggle.className = 'menu-toggle'
@@ -724,14 +726,14 @@
                 `
 
             menuToggle.onclick = () => {
-                let collapsed = !left_side_menu.classList.contains('collapsed')
-                left_side_menu.classList.toggle('collapsed', collapsed)
+                let collapsed = !nav.classList.contains('collapsed')
+                nav.classList.toggle('collapsed', collapsed)
                 localStorage.left_side_collapsed = collapsed ? 'yes' : 'no'
                 renderToggleIcon(collapsed)
             }
-            leftSideMenu.appendChild(menuToggle)
+            nav.appendChild(menuToggle)
             let initCollapsed = localStorage.left_side_collapsed == 'yes'
-            left_side_menu.classList.toggle('collapsed', initCollapsed)
+            nav.classList.toggle('collapsed', initCollapsed)
             renderToggleIcon(initCollapsed)
         }
         
@@ -817,7 +819,7 @@
         const createViews = () => {
             viewProfile = document.createElement('div')
             viewProfile.hidden = true
-            viewProfile.clsssName = 'view-profile'
+            viewProfile.className = 'view-profile'
             viewProfile.innerHTML = `
                 <section class="view-section">
                     <h2 id="personal-info">Personal Information</h2>
@@ -857,6 +859,36 @@
             main.appendChild(viewTerminal)
         }
 
+        let renderLoggedState = () => {
+            clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
+            clientName.hidden = false
+            profileFirstName.textContent = client.profile.first_name
+            profileLastName.textContent = client.profile.last_name
+            profileEmail.textContent = client.profile.email
+            profileCountry.textContent = client.profile.country
+            renderAccounts(client.accounts)
+            logout.hidden = false
+            let casesNav = {
+                profile: {
+                    view: viewProfile,
+                    menu: menuProfile
+                },
+                accounts: {
+                    view: viewAccounts,
+                    menu: menuAccounts
+                },
+                terminal: {
+                    view: viewTerminal,
+                    menu: menuTerminal
+                }
+            }
+            var selectedNav = casesNav[localStorage.nav]
+            selectedNav.menu.classList.add('active')
+            selectedNav.view.hidden = false
+            nav.hidden = false
+            if (localStorage.nav == 'terminal') useAdvancedChartWidget()
+        }
+
         const createLoginForm = () => {
             loginForm = document.createElement('form')
             loginForm.className = 'login-form'
@@ -872,19 +904,8 @@
                 
                 if (client) {
                     localStorage.logged = loginLogin.value
-                    localStorage.left_side_menu = 'profile'
+                    renderLoggedState()
                     loginForm.hidden = true
-                    left_side_menu.hidden = false
-                    clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
-                    clientName.hidden = false
-                    logout.hidden = false
-                    menuProfile.classList.add('active')
-                    profileFirstName.textContent = client.profile.first_name
-                    profileLastName.textContent = client.profile.last_name
-                    profileEmail.textContent = client.profile.email
-                    profileCountry.textContent = client.profile.country
-                    viewProfile.hidden = false
-                    renderAccounts(client.accounts)
                 } else {
                     loginLogin.classList.add('wrong')
                     loginPassword.classList.add('wrong')
@@ -927,42 +948,20 @@
         createLoginForm()
         
         if (localStorage.version != version) {
-            localStorage.version = version
             // Force user inteface to login again
             // If there major braking changes bump version for ensure logout behavior
             localStorage.removeItem('logged')
-            // Here is a place for state migration logic 
+            // Here is a place for state migration logic
+            if (localStorage.version <= 2 && localStorage.left_side_menu) {
+                localStorage.nav = localStorage.left_side_menu
+                localStorage.removeItem('left_side_menu')
+            }
+            localStorage.version = version
         }
 
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
-            clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
-            clientName.hidden = false
-            profileFirstName.textContent = client.profile.first_name
-            profileLastName.textContent = client.profile.last_name
-            profileEmail.textContent = client.profile.email
-            profileCountry.textContent = client.profile.country
-            renderAccounts(client.accounts)
-            logout.hidden = false
-            let casesNav = {
-                profile: {
-                    view: viewProfile,
-                    menu: menuProfile
-                },
-                accounts: {
-                    view: viewAccounts,
-                    menu: menuAccounts
-                },
-                terminal: {
-                    view: viewTerminal,
-                    menu: menuTerminal
-                }
-            }
-            var selectedNav = casesNav[localStorage.left_side_menu]
-            selectedNav.menu.classList.add('active')
-            selectedNav.view.hidden = false
-            left_side_menu.hidden = false
-            if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget()
+            renderLoggedState()
         } else {
             loginForm.hidden = false
         }
