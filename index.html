@@ -883,7 +883,7 @@
                     menu: menuTerminal
                 }
             }
-            var selectedNav = casesNav[localStorage.nav]
+            var selectedNav = casesNav[localStorage.nav || 'profile']
             selectedNav.menu.classList.add('active')
             selectedNav.view.hidden = false
             nav.hidden = false
