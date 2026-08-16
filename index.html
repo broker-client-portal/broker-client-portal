@@ -92,6 +92,10 @@
         border-bottom: 1px solid var(--border-color);
     }
 
+    header.center {
+        justify-content: center;
+    }
+
     main {
         flex: 1 1 auto;
         min-height: 0;
@@ -109,6 +113,9 @@
         justify-content: center;
         padding: 0;
         color: var(--text-active);
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     .client-name {
@@ -120,9 +127,6 @@
         display: flex;
         align-items: center;
         padding: 0 14px;
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius-small);
-        background: var(--background-secondary);
         color: var(--text-normal);
         overflow: hidden;
         white-space: nowrap;
@@ -141,7 +145,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0 14px;
+        padding: 0 var(--page-padding);
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-small);
         background: var(--background-secondary);
@@ -162,6 +166,84 @@
 
     .logout:active {
         transform: translateY(1px);
+    }
+
+    .logout-dialog-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .logout-dialog {
+        background: var(--background-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius-big);
+        width: 100%;
+        max-width: 360px;
+    }
+
+    .logout-dialog-header {
+        padding: var(--page-padding);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .logout-dialog-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--text-active);
+    }
+
+    .logout-dialog-body {
+        padding: var(--page-padding);
+    }
+
+    .logout-dialog-message {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--text-normal);
+    }
+
+    .logout-dialog-footer {
+        padding: var(--page-padding);
+        display: flex;
+        gap: 12px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .logout-dialog-button {
+      flex: 1;
+      padding: var(--page-padding);
+      font-size: 14px;
+      border-radius: var(--border-radius-small);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid var(--border-color);
+      background: var(--background-secondary);
+      color: var(--text-normal);
+      font-family: inherit;
+    }
+
+    .logout-dialog-button:focus,
+    .logout-dialog-button:hover,
+    .logout-dialog-button:active {
+        border-color: var(--border-color-active);
+        color: var(--text-active);
+        outline: none;
+    }
+
+    .logout-dialog-confirm:focus,
+    .logout-dialog-confirm:hover,
+    .logout-dialog-confirm:active {
+        border-color: red !important;
     }
 
     nav {
@@ -214,6 +296,62 @@
         border-color: var(--border-color-active);
         font-weight: 600;
     }
+    .menu-theme,
+    .menu-toggle {
+        min-height: 40px;
+        width: 248px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 14px;
+        border-radius: var(--border-radius-small);
+        cursor: pointer;
+        user-select: none;
+        transition:
+            background var(--transition-fast),
+            color var(--transition-fast),
+            border-color var(--transition-fast),
+            transform var(--transition-fast);
+        background: var(--background-primary);
+        color: var(--text-normal);
+        border: 1px solid var(--border-color);
+    }
+
+    .menu-theme {
+        margin-top: auto;
+    }
+
+    .menu-theme:hover,
+    .menu-toggle:hover {
+        border-color: var(--border-color-active);
+        color: var(--text-active);
+    }
+
+    .menu-theme:active,
+    .menu-toggle:active {
+        transform: translateY(1px);
+    }
+
+    .menu-theme .icon,
+    .menu-toggle .icon {
+        margin-right: 0;
+    }
+
+    nav.collapsed .menu-profile,
+    nav.collapsed .menu-accounts,
+    nav.collapsed .menu-terminal,
+    nav.collapsed .menu-theme,
+    nav.collapsed .menu-toggle {
+        width: auto;
+    }
+
+    nav.collapsed .menu-label {
+        display: none;
+    }
+
+    nav.collapsed .icon {
+        margin-right: 0;
+    }
 
     .view-terminal,
     .login-form {
@@ -234,17 +372,41 @@
     }
 
     .login-form {
-        flex: 0 0 auto;
-        width: min(100%, 320px);
+        flex: 1;
+        max-width: min(100%, 360px);
         margin: auto;
-        display: grid;
+        display: flex;
+        flex-direction: column;
         gap: 12px;
-        align-content: center;
         padding: 32px var(--page-padding);
+        height: 100%;
     }
 
-    .login-login,
-    .login-password,
+    .login-login {
+        width: 100%;
+        min-height: 42px;
+        padding: 0 14px;
+        font: inherit;
+        color: var(--text-normal);
+        border-radius: var(--border-radius-small);
+        border: 1px solid var(--border-color);
+        background: var(--background-secondary);
+        outline: none;
+        margin-top: auto;
+    }
+
+    .login-password {
+        width: 100%;
+        min-height: 42px;
+        padding: 0 14px;
+        font: inherit;
+        color: var(--text-normal);
+        border-radius: var(--border-radius-small);
+        border: 1px solid var(--border-color);
+        background: var(--background-secondary);
+        outline: none;
+    }
+
     .login-submit {
         width: 100%;
         min-height: 42px;
@@ -255,6 +417,30 @@
         border: 1px solid var(--border-color);
         background: var(--background-secondary);
         outline: none;
+        margin-bottom: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-theme {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background: transparent;
+        border: none;
+    }
+
+    .login-theme .menu-label {
+        display: none;
+    }
+
+    .login-theme .icon {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        color: var(--text-normal);
     }
 
     .login-login:focus,
@@ -268,14 +454,14 @@
     .login-submit {
         cursor: pointer;
         font-weight: 600;
-        color: var(--text-active);
-        border-color: var(--border-color-active);
     }
 
+    .login-login:hover,
+    .login-password:hover,
     .login-submit:hover {
+        border-color: var(--border-color-active);
         color: var(--text-active);
     }
-
     .wrong {
         border-color: red !important;
         outline: 2px solid red;
@@ -315,7 +501,10 @@
     }
 
     .view-section {
-        padding: 12px;
+        padding: var(--page-padding);
+    }
+    .view-section h2 {
+        margin: 0 0 var(--page-padding) 0;
     }
 
     .accounts-grid {
@@ -326,6 +515,7 @@
 
     .account-card {
         flex: 1 1 220px;
+        max-width: 360px;
         border: 1px solid var(--border-color);
         border-radius: var(--border-radius-small);
         background: var(--background-secondary);
@@ -410,62 +600,6 @@
         }
     }
 
-    .menu-theme,
-    .menu-toggle {
-        min-height: 40px;
-        width: 248px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 0 14px;
-        border-radius: var(--border-radius-small);
-        cursor: pointer;
-        user-select: none;
-        transition:
-            background var(--transition-fast),
-            color var(--transition-fast),
-            border-color var(--transition-fast),
-            transform var(--transition-fast);
-        background: var(--background-primary);
-        color: var(--text-normal);
-        border: 1px solid var(--border-color);
-    }
-
-    .menu-theme {
-        margin-top: auto;
-    }
-
-    .menu-theme:hover,
-    .menu-toggle:hover {
-        border-color: var(--border-color-active);
-        color: var(--text-active);
-    }
-
-    .menu-theme:active,
-    .menu-toggle:active {
-        transform: translateY(1px);
-    }
-
-    .menu-theme .icon,
-    .menu-toggle .icon {
-        margin-right: 0;
-    }
-
-    nav.collapsed .menu-profile,
-    nav.collapsed .menu-accounts,
-    nav.collapsed .menu-terminal,
-    nav.collapsed .menu-theme,
-    nav.collapsed .menu-toggle {
-        width: auto;
-    }
-
-    nav.collapsed .menu-label {
-        display: none;
-    }
-
-    nav.collapsed .icon {
-        margin-right: 0;
-    }
 </style>
 </head>
 <body>
@@ -547,17 +681,24 @@
         ]
         
         let root = document.getElementsByClassName('root')[0]
+        let header
+        let main
         let loginForm
         let loginLogin
         let loginPassword
         let loginSubmit
+        let nav
+        let clientName
+        let clientNameText
+        let logout
+        let logoutDialogOverlay
+        let logoutDialog
+        let logoutDialogCancel
+        let logoutDialogConfirm
         let profileFirstName
         let profileLastName
         let profileEmail
         let profileCountry
-        let logout
-        let clientName
-        let clientNameText
         let viewProfile
         let viewAccounts
         let viewTerminal
@@ -566,59 +707,102 @@
         let menuTerminal
         let menuTheme
         let menuToggle
-        let nav
+
+        let logo = `<svg viewBox="0 0 96 40" width="96" height="40" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:800;font-family:system-ui,sans-serif;font-size:18px;letter-spacing:0.04em">
+            <text x="0" y="26" text-anchor="left">OneRoyal</text>
+        </svg>`
 
         const createTopHeaderNavbar = () => {
-            root.innerHTML += `
-                <header>
-                    <div class="logo">
-                        <svg viewBox="0 0 96 40" width="96" height="40" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:800;font-family:system-ui,sans-serif;font-size:18px;letter-spacing:0.04em">
-                            <text x="48" y="26" text-anchor="middle">Broker</text>
-                        </svg>
+            header.classList.remove('center')
+            header.innerHTML = `
+                <div class="logo">
+                    ${logo}
+                </div>
+                <div class="client-name">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <span></span>
+                </div>
+
+                <div class="logout">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Sign Out
+                </div>
+                <div class="logout-dialog-overlay" hidden>
+                    <div class="logout-dialog">
+                        <div class="logout-dialog-header">
+                            <h2 class="logout-dialog-title">Sign out</h2>
+                        </div>
+                        <div class="logout-dialog-body">
+                            <p class="logout-dialog-message">
+                                Are you sure you want to sign out from your profile?
+                            </p>
+                        </div>
+                        <div class="logout-dialog-footer">
+                            <button class="logout-dialog-button logout-dialog-cancel">Cancel</button>
+                            <button class="logout-dialog-button logout-dialog-confirm">Sign out</button>
+                        </div>
                     </div>
-                    <div class="client-name" hidden>
-                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                        <span></span>
-                    </div>
-                    <div class="logout" hidden>
-                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                            <polyline points="16 17 21 12 16 7"/>
-                            <line x1="21" y1="12" x2="9" y2="12"/>
-                        </svg>
-                        Logout
-                    </div>
-                </header>
+                </div>
             `
 
-            clientName = root.getElementsByClassName('client-name')[0]
+            clientName = header.getElementsByClassName('client-name')[0]
             clientNameText = clientName.getElementsByTagName('span')[0]
-            logout = root.getElementsByClassName('logout')[0]
+            logout = header.getElementsByClassName('logout')[0]
+            logoutDialogOverlay = header.getElementsByClassName('logout-dialog-overlay')[0]
+            logoutDialog = logoutDialogOverlay.getElementsByClassName('logout-dialog')[0]
+            logoutDialogCancel = logoutDialogOverlay.getElementsByClassName('logout-dialog-cancel')[0]
+            logoutDialogConfirm = logoutDialogOverlay.getElementsByClassName('logout-dialog-confirm')[0]
             
-            logout.onclick = () => {
-                localStorage.removeItem('logged')
-                loginForm.hidden = false
-                nav.hidden = true
-                clientName.hidden = true
-                logout.hidden = true
-                loginLogin.value = ''
-                loginPassword.value = ''
-                viewProfile.hidden = true
-                viewAccounts.hidden = true
-                viewTerminal.hidden = true
-                menuProfile.classList.remove('active')
-                menuAccounts.classList.remove('active')
-                menuTerminal.classList.remove('active')
+            logout.onclick = () => logoutDialogOverlay.hidden = false
+            logoutDialogOverlay.onclick = e => {
+                if (e.target == logoutDialogConfirm) {
+                    localStorage.removeItem('logged')
+                    main.innerHTML = ''
+                    createLoginForm()
+                    return
+                }
+                if (
+                    e.target == logoutDialogCancel ||
+                    e.target == logoutDialogOverlay
+                ) logoutDialogOverlay.hidden = true
             }
         }
-        
+
+        document.addEventListener('keydown', e => {
+            if (e.key == 'Escape') logoutDialogOverlay.hidden = true
+        })
+
+        const renderThemeControls = (container, option) =>
+            container.innerHTML = option == 0
+                ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/></svg><span class="menu-label">OS Default</span>`
+                : option == 1
+                ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="menu-label">Light</span>`
+                : `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg><span class="menu-label">Dark</span>`
+
+        const handlerThemeSwitch = container => {
+            localStorage.theme = localStorage.theme
+                ? (1 + +localStorage.theme) % 3
+                : 1
+            renderThemeControls(container, localStorage.theme)
+            let willBeDark = localStorage.theme == 0
+                ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
+                : localStorage.theme == 2
+            if (willBeDark == window.dark) return
+            window.dark = willBeDark
+            document.documentElement.toggleAttribute('dark', window.dark)
+            if (localStorage.logged) useAdvancedChartWidget()
+        }
         const createLeftSideMenu = () => {
             let collapsed = localStorage.left_side_collapsed == 'yes'
             main.innerHTML = `
-                <nav class="${collapsed ? 'collapsed' : ''}" hidden>
+                <nav class="${collapsed ? 'collapsed' : ''}">
                     <div class="menu-profile">
                         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="8" cy="9" r="3"/>
@@ -655,13 +839,7 @@
             menuTheme = nav.getElementsByClassName('menu-theme')[0]
             menuToggle = nav.getElementsByClassName('menu-toggle')[0]
 
-            const renderThemeControls = option =>
-                menuTheme.innerHTML = option == 0
-                    ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/></svg><span class="menu-label">OS Default</span>`
-                    : option == 1
-                    ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg><span class="menu-label">Light</span>`
-                    : `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></svg><span class="menu-label">Dark</span>`
-            renderThemeControls(localStorage.theme || 0)
+            renderThemeControls(menuTheme, localStorage.theme || 0)
 
             const renderToggleIcon = collapsed =>
                 menuToggle.innerHTML = `
@@ -703,19 +881,7 @@
                     useAdvancedChartWidget()
                 }
             }
-            menuTheme.onclick = () => {
-                localStorage.theme = localStorage.theme 
-                    ? (1 + +localStorage.theme) % 3
-                    : 1
-                renderThemeControls(localStorage.theme)
-                let willBeDark = localStorage.theme == 0
-                    ? window.matchMedia?.('(prefers-color-scheme: dark)').matches
-                    : localStorage.theme == 2
-                if (willBeDark == window.dark) return
-                window.dark = willBeDark
-                document.documentElement.toggleAttribute('dark', window.dark)
-                useAdvancedChartWidget()
-            }
+            menuTheme.onclick = () => handlerThemeSwitch(menuTheme)
             menuToggle.onclick = () => {
                 let collapsed = !nav.classList.contains('collapsed')
                 nav.classList.toggle('collapsed', collapsed)
@@ -750,7 +916,7 @@
                 "locale": "en",
                 "save_image": true,
                 "style": "1",
-                "symbol": "Binance:BTCUSDT",
+                "symbol": "Coinbase:BTCUSD",
                 "theme": dark ? "dark" : "light",
                 "timezone": "Etc/UTC",
                 "backgroundColor": dark ? "#0F0F0F" : "#ffffff",
@@ -793,7 +959,7 @@
                         </div>
                         <div class="info-item">
                             <dt>Status</dt>
-                            <dd${account.status == 'active' ? '' : ' class="account-status-disabled"'}>${account.status}</dd>
+                            <dd${account.status == 'Active' ? '' : ' class="account-status-disabled"'}>${account.status}</dd>
                         </div>
                     </dl>
                 `
@@ -848,13 +1014,11 @@
 
         let renderLoggedState = () => {
             clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
-            clientName.hidden = false
             profileFirstName.textContent = client.profile.first_name
             profileLastName.textContent = client.profile.last_name
             profileEmail.textContent = client.profile.email
             profileCountry.textContent = client.profile.country
             renderAccounts(client.accounts)
-            logout.hidden = false
             let casesNav = {
                 profile: {
                     view: viewProfile,
@@ -872,16 +1036,21 @@
             var selectedNav = casesNav[localStorage.nav || 'profile']
             selectedNav.menu.classList.add('active')
             selectedNav.view.hidden = false
-            nav.hidden = false
             if (localStorage.nav == 'terminal') useAdvancedChartWidget()
         }
 
         const createLoginForm = () => {
+            header.classList.add('center')
+            header.innerHTML = `
+                <div class="logo">
+                    ${logo}
+                </div>`
+
             loginForm = document.createElement('form')
             loginForm.className = 'login-form'
-            loginForm.hidden = true
             loginForm.method = 'POST'
             loginForm.action = '#'
+
             loginForm.onsubmit = e => {
                 e.preventDefault()
                 client = db.find(({profile}) =>
@@ -891,8 +1060,11 @@
                 
                 if (client) {
                     localStorage.logged = loginLogin.value
+                    main.innerHTML = ''
+                    createTopHeaderNavbar()
+                    createLeftSideMenu()
+                    createViews()
                     renderLoggedState()
-                    loginForm.hidden = true
                 } else {
                     loginLogin.classList.add('wrong')
                     loginPassword.classList.add('wrong')
@@ -904,6 +1076,7 @@
             loginLogin.className = 'login-login'
             loginLogin.type = 'text'
             loginLogin.name = 'login'
+            loginLogin.value = 'testLogin'
             loginLogin.placeholder = 'Login'
             loginForm.appendChild(loginLogin)
 
@@ -911,6 +1084,7 @@
             loginPassword.className = 'login-password'
             loginPassword.type = 'password'
             loginPassword.name = 'password'
+            loginPassword.value = 'testPassword'
             loginPassword.placeholder = 'Password'
             loginForm.appendChild(loginPassword)
             
@@ -923,17 +1097,24 @@
             loginSubmit = document.createElement('input')
             loginSubmit.className = 'login-submit'
             loginSubmit.type = 'submit'
-            loginSubmit.value = 'Enter'
+            loginSubmit.value = 'Sign In'
+
             loginForm.appendChild(loginSubmit)
+
+            let loginThemeControl = document.createElement('div')
+            loginThemeControl.className = 'login-theme'
+            renderThemeControls(loginThemeControl, localStorage.theme || 0)
+            loginThemeControl.onclick = () => handlerThemeSwitch(loginThemeControl)
+            loginForm.appendChild(loginThemeControl)
         }
 
-        createTopHeaderNavbar()
-        let main = document.createElement('main')
-        root.appendChild(main)
-        createLeftSideMenu()
-        createViews()
-        createLoginForm()
-        
+        root.innerHTML = `
+            <header></header>
+            <main></main>
+        `
+        header = root.getElementsByTagName('header')[0]
+        main = root.getElementsByTagName('main')[0]
+
         if (localStorage.version != version) {
             // Force user inteface to login again
             // If there major braking changes bump version for ensure logout behavior
@@ -948,9 +1129,12 @@
 
         if (localStorage.logged) {
             client = db.find(({profile}) => localStorage.logged == profile.login)
+            createTopHeaderNavbar()
+            createLeftSideMenu()
+            createViews()
             renderLoggedState()
         } else {
-            loginForm.hidden = false
+            createLoginForm()
         }
     </script>
 </body>
