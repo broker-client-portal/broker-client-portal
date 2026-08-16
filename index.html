@@ -45,7 +45,7 @@
         box-sizing: border-box;
     }
 
-    html, body, #root {
+    html, body, .root {
         height: 100%;
     }
 
@@ -65,7 +65,7 @@
         line-height: 1.4;
     }
 
-    #root {
+    .root {
         height: 100dvh;
         display: flex;
         flex-direction: column;
@@ -470,7 +470,7 @@
 </style>
 </head>
 <body>
-    <div id="root"></div>
+    <div class="root"></div>
     <script>
         let version = 3
 
@@ -547,6 +547,7 @@
             }
         ]
         
+        let root = document.getElementsByClassName('root')[0]
         let loginForm
         let loginLogin
         let loginPassword
@@ -897,7 +898,7 @@
             loginForm.action = '#'
             loginForm.onsubmit = e => {
                 e.preventDefault()
-                let client = db.find(({profile}) =>
+                client = db.find(({profile}) =>
                     profile.login == loginLogin.value &&
                     profile.password == loginPassword.value
                 )
