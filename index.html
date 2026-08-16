@@ -178,9 +178,9 @@
         border-right: 1px solid var(--border-color);
     }
 
-    #menu_profile,
-    #menu_accounts,
-    #menu_terminal {
+    .menu-profile,
+    .menu-accounts,
+    .menu-terminal {
         min-height: 48px;
         width: 248px;
         display: flex;
@@ -199,16 +199,16 @@
         border: 1px solid var(--border-color);
     }
 
-    #menu_profile:hover,
-    #menu_accounts:hover,
-    #menu_terminal:hover {
+    .menu-profile:hover,
+    .menu-accounts:hover,
+    .menu-terminal:hover {
         border-color: var(--border-color-active);
         color: var(--text-active);
     }
 
-    #menu_profile.active,
-    #menu_accounts.active,
-    #menu_terminal.active {
+    .menu-profile.active,
+    .menu-accounts.active,
+    .menu-terminal.active {
         background: var(--background-primary);
         color: var(--text-active);
         border-color: var(--border-color-active);
@@ -408,8 +408,8 @@
         }
     }
 
-    #menu_theme,
-    #menu_toggle {
+    .menu-theme,
+    .menu-toggle {
         min-height: 40px;
         width: 248px;
         display: flex;
@@ -429,31 +429,31 @@
         border: 1px solid var(--border-color);
     }
 
-    #menu_theme {
+    .menu-theme {
         margin-top: auto;
     }
 
-    #menu_theme:hover,
-    #menu_toggle:hover {
+    .menu-theme:hover,
+    .menu-toggle:hover {
         border-color: var(--border-color-active);
         color: var(--text-active);
     }
 
-    #menu_theme:active,
-    #menu_toggle:active {
+    .menu-theme:active,
+    .menu-toggle:active {
         transform: translateY(1px);
     }
 
-    #menu_theme .icon,
-    #menu_toggle .icon {
+    .menu-theme .icon,
+    .menu-toggle .icon {
         margin-right: 0;
     }
 
-    #left_side_menu.collapsed #menu_profile,
-    #left_side_menu.collapsed #menu_accounts,
-    #left_side_menu.collapsed #menu_terminal,
-    #left_side_menu.collapsed #menu_theme,
-    #left_side_menu.collapsed #menu_toggle {
+    #left_side_menu.collapsed .menu-profile,
+    #left_side_menu.collapsed .menu-accounts,
+    #left_side_menu.collapsed .menu-terminal,
+    #left_side_menu.collapsed .menu-theme,
+    #left_side_menu.collapsed .menu-toggle {
         width: auto;
     }
 
@@ -558,7 +558,12 @@
         let viewProfile
         let viewAccounts
         let viewTerminal
-
+        let menuProfile
+        let menuAccounts
+        let menuTerminal
+        let menuTheme
+        let menuToggle
+        
         const createTopHeaderNavbar = () => {
             let header = document.createElement('header')
             root.appendChild(header)
@@ -606,9 +611,9 @@
                 viewProfile.hidden = true
                 viewAccounts.hidden = true
                 viewTerminal.hidden = true
-                menu_profile.classList.remove('active')
-                menu_accounts.classList.remove('active')
-                menu_terminal.classList.remove('active')
+                menuProfile.classList.remove('active')
+                menuAccounts.classList.remove('active')
+                menuTerminal.classList.remove('active')
             }
             header.appendChild(logout)
         }
@@ -619,8 +624,8 @@
             leftSideMenu.id = 'left_side_menu'
             main.appendChild(leftSideMenu)
 
-            let menuProfile = document.createElement('div')
-            menuProfile.id = 'menu_profile'
+            menuProfile = document.createElement('div')
+            menuProfile.className = 'menu-profile'
             menuProfile.innerHTML = `
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="8" cy="9" r="3"/>
@@ -631,9 +636,9 @@
                 </svg><span class="menu-label">Profile</span>
             `
             menuProfile.onclick = () => {
-                menu_profile.classList.add('active')
-                menu_accounts.classList.remove('active')
-                menu_terminal.classList.remove('active')
+                menuProfile.classList.add('active')
+                menuAccounts.classList.remove('active')
+                menuTerminal.classList.remove('active')
                 localStorage.left_side_menu = 'profile'
                 viewProfile.hidden = false
                 viewAccounts.hidden = true
@@ -641,8 +646,8 @@
             }
             leftSideMenu.appendChild(menuProfile)
 
-            let menuAccounts = document.createElement('div')
-            menuAccounts.id = 'menu_accounts'
+            menuAccounts = document.createElement('div')
+            menuAccounts.className = 'menu-accounts'
             menuAccounts.innerHTML = `
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="2" y="5" width="20" height="14" rx="2"/>
@@ -650,9 +655,9 @@
                 </svg><span class="menu-label">Accounts</span>
             `
             menuAccounts.onclick = () => {
-                menu_profile.classList.remove('active')
-                menu_accounts.classList.add('active')
-                menu_terminal.classList.remove('active')
+                menuProfile.classList.remove('active')
+                menuAccounts.classList.add('active')
+                menuTerminal.classList.remove('active')
                 localStorage.left_side_menu = 'accounts'
                 viewProfile.hidden = true
                 viewAccounts.hidden = false
@@ -660,8 +665,8 @@
             }
             leftSideMenu.appendChild(menuAccounts)
             
-            let menuTerminal = document.createElement('div')
-            menuTerminal.id = 'menu_terminal'
+            menuTerminal = document.createElement('div')
+            menuTerminal.className = 'menu-terminal'
             menuTerminal.innerHTML = `
                 <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="20" x2="18" y2="10"/>
@@ -670,9 +675,9 @@
                 </svg><span class="menu-label">Terminal</span>
             `
             menuTerminal.onclick = () => {
-                menu_profile.classList.remove('active')
-                menu_accounts.classList.remove('active')
-                menu_terminal.classList.add('active')
+                menuProfile.classList.remove('active')
+                menuAccounts.classList.remove('active')
+                menuTerminal.classList.add('active')
                 localStorage.left_side_menu = 'terminal'
                 viewProfile.hidden = true
                 viewAccounts.hidden = true
@@ -683,8 +688,8 @@
             }
             leftSideMenu.appendChild(menuTerminal)
 
-            let menuTheme = document.createElement('div')
-            menuTheme.id = 'menu_theme'
+            menuTheme = document.createElement('div')
+            menuTheme.className = 'menu-theme'
             const renderTheme = option =>
                 menuTheme.innerHTML = option == 0
                     ? `<svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor" stroke="none"/></svg><span class="menu-label">OS Default</span>`
@@ -707,8 +712,8 @@
             renderTheme(localStorage.theme || 0)
             leftSideMenu.appendChild(menuTheme)
 
-            let menuToggle = document.createElement('div')
-            menuToggle.id = 'menu_toggle'
+            menuToggle = document.createElement('div')
+            menuToggle.className = 'menu-toggle'
             const renderToggleIcon = collapsed =>
                 menuToggle.innerHTML = `
                     <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -867,19 +872,19 @@
                 
                 if (client) {
                     localStorage.logged = loginLogin.value
+                    localStorage.left_side_menu = 'profile'
                     loginForm.hidden = true
                     left_side_menu.hidden = false
                     clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
                     clientName.hidden = false
+                    logout.hidden = false
+                    menuProfile.classList.add('active')
                     profileFirstName.textContent = client.profile.first_name
                     profileLastName.textContent = client.profile.last_name
                     profileEmail.textContent = client.profile.email
                     profileCountry.textContent = client.profile.country
-                    renderAccounts(client.accounts)
-                    logout.hidden = false
-                    menu_profile.classList.add('active')
-                    localStorage.left_side_menu = 'profile'
                     viewProfile.hidden = false
+                    renderAccounts(client.accounts)
                 } else {
                     loginLogin.classList.add('wrong')
                     loginPassword.classList.add('wrong')
@@ -939,15 +944,23 @@
             profileCountry.textContent = client.profile.country
             renderAccounts(client.accounts)
             logout.hidden = false
-            let activeMenu = document.getElementById('menu_' + localStorage.left_side_menu)
-            activeMenu.classList.add('active')
-            let views = {
-                profile: viewProfile,
-                accounts: viewAccounts,
-                terminal: viewTerminal
+            let casesNav = {
+                profile: {
+                    view: viewProfile,
+                    menu: menuProfile
+                },
+                accounts: {
+                    view: viewAccounts,
+                    menu: menuAccounts
+                },
+                terminal: {
+                    view: viewTerminal,
+                    menu: menuTerminal
+                }
             }
-            let activeView = views[localStorage.left_side_menu]
-            activeView.hidden = false
+            var selectedNav = casesNav[localStorage.left_side_menu]
+            selectedNav.menu.classList.add('active')
+            selectedNav.view.hidden = false
             left_side_menu.hidden = false
             if (localStorage.left_side_menu == 'terminal') useAdvancedChartWidget()
         } else {
