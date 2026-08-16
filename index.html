@@ -369,7 +369,6 @@
 
         .logo {
             min-width: auto;
-            padding: 0 10px;
         }
 
         .logout {
@@ -570,40 +569,35 @@
         let nav
 
         const createTopHeaderNavbar = () => {
-            let header = document.createElement('header')
-            root.appendChild(header)
-
-            let logo = document.createElement('div')
-            logo.className = 'logo'
-            logo.innerHTML = `
-                <svg viewBox="0 0 96 40" width="96" height="40" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:800;font-family:system-ui,sans-serif;font-size:18px;letter-spacing:0.04em">
-                    <text x="48" y="26" text-anchor="middle">Broker</text>
-                </svg>
+            root.innerHTML += `
+                <header>
+                    <div class="logo">
+                        <svg viewBox="0 0 96 40" width="96" height="40" xmlns="http://www.w3.org/2000/svg" style="display:block;fill:currentColor;font-weight:800;font-family:system-ui,sans-serif;font-size:18px;letter-spacing:0.04em">
+                            <text x="48" y="26" text-anchor="middle">Broker</text>
+                        </svg>
+                    </div>
+                    <div class="client-name" hidden>
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <span></span>
+                    </div>
+                    <div class="logout" hidden>
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                            <polyline points="16 17 21 12 16 7"/>
+                            <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        Logout
+                    </div>
+                </header>
             `
-            header.appendChild(logo)
 
-            clientName = document.createElement('div')
-            clientName.hidden = true
-            clientName.className = 'client-name'
-            clientName.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg><span></span>
-            `
-            header.appendChild(clientName)
+            clientName = root.getElementsByClassName('client-name')[0]
             clientNameText = clientName.getElementsByTagName('span')[0]
+            logout = root.getElementsByClassName('logout')[0]
             
-            logout = document.createElement('div')
-            logout.hidden = true
-            logout.className = 'logout'
-            logout.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>Logout
-            `
             logout.onclick = () => {
                 localStorage.removeItem('logged')
                 loginForm.hidden = false
@@ -619,7 +613,6 @@
                 menuAccounts.classList.remove('active')
                 menuTerminal.classList.remove('active')
             }
-            header.appendChild(logout)
         }
         
         const createLeftSideMenu = () => {
