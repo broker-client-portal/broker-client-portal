@@ -938,46 +938,6 @@
             })                    
             tradingviewWidgetContainer.appendChild(script)
         }
-
-        const renderAccounts = accounts => {
-            viewAccounts.innerHTML = ''
-            let section = document.createElement('section')
-            section.className = 'view-section'
-            section.innerHTML = `<h2>Accounts</h2>`
-            let grid = document.createElement('div')
-            grid.className = 'accounts-grid'
-            accounts.forEach(account => {
-                let card = document.createElement('article')
-                card.className = 'account-card'
-                card.innerHTML = `
-                    <div class="account-card-header">
-                        <span class="account-id">${account.id}</span>
-                        <span class="account-badge">${account.demo ? 'DEMO' : 'LIVE'}</span>
-                    </div>
-                    <dl class="info-list">
-                        <div class="info-item">
-                            <dt>Currency</dt>
-                            <dd>${account.currency}</dd>
-                        </div>
-                        <div class="info-item">
-                            <dt>Balance</dt>
-                            <dd>${account.currency} ${account.balance}</dd>
-                        </div>
-                        <div class="info-item">
-                            <dt>Leverage</dt>
-                            <dd>${account.leverage}</dd>
-                        </div>
-                        <div class="info-item">
-                            <dt>Status</dt>
-                            <dd${account.status == 'Active' ? '' : ' class="account-status-disabled"'}>${account.status}</dd>
-                        </div>
-                    </dl>
-                `
-                grid.appendChild(card)
-            })
-            section.appendChild(grid)
-            viewAccounts.appendChild(section)
-        }
         
         const createViews = () => {
             viewProfile = document.createElement('div')
@@ -1014,6 +974,39 @@
             viewAccounts = document.createElement('div')
             viewAccounts.hidden = true
             viewAccounts.className = 'view-accounts'
+            viewAccounts.innerHTML = `
+                <section class="view-section">
+                    <h2>Accounts</h2>
+                    <div class="accounts-grid">
+                        ${client.accounts.map(account => `
+                            <article class="account-card">
+                                <div class="account-card-header">
+                                    <span class="account-id">${account.id}</span>
+                                    <span class="account-badge">${account.demo ? 'DEMO' : 'LIVE'}</span>
+                                </div>
+                                <dl class="info-list">
+                                    <div class="info-item">
+                                        <dt>Currency</dt>
+                                        <dd>${account.currency}</dd>
+                                    </div>
+                                    <div class="info-item">
+                                        <dt>Balance</dt>
+                                        <dd>${account.currency} ${account.balance}</dd>
+                                    </div>
+                                    <div class="info-item">
+                                        <dt>Leverage</dt>
+                                        <dd>${account.leverage}</dd>
+                                    </div>
+                                    <div class="info-item">
+                                        <dt>Status</dt>
+                                        <dd${account.status == 'Active' ? '' : ' class="account-status-disabled"'}>${account.status}</dd>
+                                    </div>
+                                </dl>
+                            </article>
+                        `).join('')}
+                    </div>
+                </section>
+            `
             main.appendChild(viewAccounts)
             
             viewTerminal = document.createElement('div')
@@ -1023,7 +1016,6 @@
         }
 
         let renderLoggedState = () => {
-            renderAccounts(client.accounts)
             let casesNav = {
                 profile: {
                     view: viewProfile,
