@@ -817,7 +817,7 @@
             let collapsed = localStorage.left_side_collapsed == 'yes'
             main.innerHTML = `
                 <nav class="${collapsed ? 'collapsed' : ''}">
-                    <div class="menu-profile">
+                    <div class="menu-profile${!localStorage.nav || localStorage.nav == 'profile' ? ' active' : ''}">
                         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="8" cy="9" r="3"/>
                             <path d="M2 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
@@ -827,14 +827,14 @@
                         </svg>
                         <span class="menu-label">Profile</span>
                     </div>
-                    <div class="menu-accounts">
+                    <div class="menu-accounts${localStorage.nav == 'accounts' ? ' active' : ''}">
                         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="5" width="20" height="14" rx="2"/>
                             <line x1="2" y1="10" x2="22" y2="10"/>
                         </svg>
                         <span class="menu-label">Accounts</span>
                     </div>
-                    <div class="menu-terminal">
+                    <div class="menu-terminal${localStorage.nav == 'terminal' ? ' active' : ''}">
                         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="20" x2="18" y2="10"/>
                             <line x1="12" y1="20" x2="12" y2="4"/>
@@ -1020,23 +1020,6 @@
             main.appendChild(viewTerminal)
         }
 
-        let renderLoggedState = () => {
-            let casesNav = {
-                profile: {
-                    menu: menuProfile
-                },
-                accounts: {
-                    menu: menuAccounts
-                },
-                terminal: {
-                    menu: menuTerminal
-                }
-            }
-            let selectedNav = casesNav[localStorage.nav || 'profile']
-            selectedNav.menu.classList.add('active')
-            if (localStorage.nav == 'terminal') useAdvancedChartWidget()
-        }
-
         const createLoginForm = () => {
             header.classList.add('center')
             header.innerHTML = `
@@ -1081,7 +1064,7 @@
                     createTopHeaderNavbar()
                     createLeftSideMenu()
                     createViews()
-                    renderLoggedState()
+                    if (localStorage.nav == 'terminal') useAdvancedChartWidget()
                 } else {
                     loginLogin.classList.add('wrong')
                     loginPassword.classList.add('wrong')
@@ -1122,7 +1105,7 @@
             createTopHeaderNavbar()
             createLeftSideMenu()
             createViews()
-            renderLoggedState()
+            if (localStorage.nav == 'terminal') useAdvancedChartWidget()
         } else {
             createLoginForm()
         }
