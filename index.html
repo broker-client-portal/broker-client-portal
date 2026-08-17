@@ -701,8 +701,6 @@
         let loginSubmit
         let loginThemeControl
         let nav
-        let clientName
-        let clientNameText
         let logout
         let logoutDialogOverlay
         let logoutDialog
@@ -736,7 +734,7 @@
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                         <circle cx="12" cy="7" r="4"/>
                     </svg>
-                    <span></span>
+                    <span>${client.profile.first_name + ' ' + client.profile.last_name}</span>
                 </div>
 
                 <div class="logout">
@@ -765,8 +763,6 @@
                 </div>
             `
 
-            clientName = header.getElementsByClassName('client-name')[0]
-            clientNameText = clientName.getElementsByTagName('span')[0]
             logout = header.getElementsByClassName('logout')[0]
             logoutDialogOverlay = header.getElementsByClassName('logout-dialog-overlay')[0]
             logoutDialog = logoutDialogOverlay.getElementsByClassName('logout-dialog')[0]
@@ -1027,7 +1023,6 @@
         }
 
         let renderLoggedState = () => {
-            clientNameText.textContent = client.profile.first_name + ' ' + client.profile.last_name
             profileFirstName.textContent = client.profile.first_name
             profileLastName.textContent = client.profile.last_name
             profileEmail.textContent = client.profile.email
