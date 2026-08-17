@@ -989,19 +989,19 @@
                     <dl class="info-list">
                         <div class="info-item">
                             <dt>First Name</dt>
-                            <dd class="profile-first-name"></dd>
+                            <dd class="profile-first-name">${client.profile.first_name}</dd>
                         </div>
                         <div class="info-item">
                             <dt>Last Name</dt>
-                            <dd class="profile-last-name"></dd>
+                            <dd class="profile-last-name">${client.profile.last_name}</dd>
                         </div>
                         <div class="info-item">
                             <dt>Email</dt>
-                            <dd class="profile-email"></dd>
+                            <dd class="profile-email">${client.profile.email}</dd>
                         </div>
                         <div class="info-item">
                             <dt>Country</dt>
-                            <dd class="profile-country"></dd>
+                            <dd class="profile-country">${client.profile.country}</dd>
                         </div>
                     </dl>
                 </section>`
@@ -1023,10 +1023,6 @@
         }
 
         let renderLoggedState = () => {
-            profileFirstName.textContent = client.profile.first_name
-            profileLastName.textContent = client.profile.last_name
-            profileEmail.textContent = client.profile.email
-            profileCountry.textContent = client.profile.country
             renderAccounts(client.accounts)
             let casesNav = {
                 profile: {
