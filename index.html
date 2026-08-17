@@ -245,6 +245,10 @@
     .logout-dialog-confirm:active {
         border-color: red !important;
     }
+    
+    .logout-dialog-button:active {
+        transform: translateY(1px);
+    }
 
     nav {
         flex: 0 0 auto;
@@ -382,23 +386,17 @@
         height: 100%;
     }
 
-    .login-login {
-        width: 100%;
-        min-height: 42px;
-        padding: 0 14px;
-        font: inherit;
-        color: var(--text-normal);
-        border-radius: var(--border-radius-small);
-        border: 1px solid var(--border-color);
-        background: var(--background-secondary);
-        outline: none;
-        margin-top: auto;
+    .login-form label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-bottom: -4px;
     }
-
+    
+    .login-login,
     .login-password {
         width: 100%;
         min-height: 42px;
-        padding: 0 14px;
+        padding: 0 var(--page-padding);
         font: inherit;
         color: var(--text-normal);
         border-radius: var(--border-radius-small);
@@ -406,21 +404,59 @@
         background: var(--background-secondary);
         outline: none;
     }
+    
+    .login-label-login {
+        margin-top: auto;
+    }
+    .login-label-password {
+        margin-top: 6px;
+    }
 
     .login-submit {
-        width: 100%;
-        min-height: 42px;
-        padding: 0 14px;
+        min-height: 40px;
+        padding: 0 var(--page-padding);
         font: inherit;
         color: var(--text-normal);
         border-radius: var(--border-radius-small);
         border: 1px solid var(--border-color);
         background: var(--background-secondary);
         outline: none;
+        margin-top: var(--page-padding);
         margin-bottom: auto;
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
+        user-select: none;
+        transition:
+            background var(--transition-fast),
+            color var(--transition-fast),
+            border-color var(--transition-fast),
+            transform var(--transition-fast);
+    }
+    
+    .login-submit:active {
+        transform: translateY(1px);
+    }
+
+    .login-login:focus,
+    .login-password:focus,
+    .login-submit:focus {
+        border-color: var(--border-color-active);
+        outline: 2px solid var(--border-color-active);
+        outline-offset: 0;
+    }
+
+    .login-login:hover,
+    .login-password:hover,
+    .login-submit:hover {
+        border-color: var(--border-color-active);
+        color: var(--text-active);
+    }
+
+    .wrong {
+        border-color: red !important;
+        outline: 2px solid red;
     }
 
     .login-theme {
@@ -441,30 +477,6 @@
         height: 20px;
         cursor: pointer;
         color: var(--text-normal);
-    }
-
-    .login-login:focus,
-    .login-password:focus,
-    .login-submit:focus {
-        border-color: var(--border-color-active);
-        outline: 2px solid var(--border-color-active);
-        outline-offset: 0;
-    }
-
-    .login-submit {
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    .login-login:hover,
-    .login-password:hover,
-    .login-submit:hover {
-        border-color: var(--border-color-active);
-        color: var(--text-active);
-    }
-    .wrong {
-        border-color: red !important;
-        outline: 2px solid red;
     }
 
     .icon {
@@ -687,6 +699,7 @@
         let loginLogin
         let loginPassword
         let loginSubmit
+        let loginThemeControl
         let nav
         let clientName
         let clientNameText
@@ -929,6 +942,7 @@
             })                    
             tradingviewWidgetContainer.appendChild(script)
         }
+
         const renderAccounts = accounts => {
             viewAccounts.innerHTML = ''
             let section = document.createElement('section')
@@ -1046,11 +1060,30 @@
                     ${logo}
                 </div>`
 
-            loginForm = document.createElement('form')
-            loginForm.className = 'login-form'
-            loginForm.method = 'POST'
-            loginForm.action = '#'
-
+            main.innerHTML = `
+                <form class="login-form" method="POST" action="#">
+                    <label class="login-label-login" for="login_login">Login</label>
+                    <input id="login_login" class="login-login" type="text" name="login" value="testLogin" placeholder="Login" />
+                    <label class="login-label-password" for="login_password">Password</label>
+                    <input id="login_password" class="login-password" type="password" name="password" value="testPassword" placeholder="Password" />
+                    <button class="login-submit" type="submit">
+                        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="8 7 3 12 8 17"/>
+                            <line x1="3" y1="12" x2="15" y2="12"/>
+                        </svg>
+                        Sign In                    
+                    </button>
+                    <div class="login-theme"></div>
+                </form>
+            `
+            
+            loginForm = main.getElementsByClassName('login-form')[0]
+            loginLogin = loginForm.getElementsByClassName('login-login')[0]
+            loginPassword = loginForm.getElementsByClassName('login-password')[0]
+            loginSubmit = loginForm.getElementsByClassName('login-submit')[0]
+            loginThemeControl = loginForm.getElementsByClassName('login-theme')[0]
+            
             loginForm.onsubmit = e => {
                 e.preventDefault()
                 client = db.find(({profile}) =>
@@ -1070,42 +1103,15 @@
                     loginPassword.classList.add('wrong')
                 }
             }
-            main.appendChild(loginForm)
 
-            loginLogin = document.createElement('input')
-            loginLogin.className = 'login-login'
-            loginLogin.type = 'text'
-            loginLogin.name = 'login'
-            loginLogin.value = 'testLogin'
-            loginLogin.placeholder = 'Login'
-            loginForm.appendChild(loginLogin)
-
-            loginPassword = document.createElement('input')
-            loginPassword.className = 'login-password'
-            loginPassword.type = 'password'
-            loginPassword.name = 'password'
-            loginPassword.value = 'testPassword'
-            loginPassword.placeholder = 'Password'
-            loginForm.appendChild(loginPassword)
-            
             loginLogin.onfocus =
             loginPassword.onfocus = () => {
                 loginLogin.classList.remove('wrong')
                 loginPassword.classList.remove('wrong')
             }
 
-            loginSubmit = document.createElement('input')
-            loginSubmit.className = 'login-submit'
-            loginSubmit.type = 'submit'
-            loginSubmit.value = 'Sign In'
-
-            loginForm.appendChild(loginSubmit)
-
-            let loginThemeControl = document.createElement('div')
-            loginThemeControl.className = 'login-theme'
             renderThemeControls(loginThemeControl, localStorage.theme || 0)
             loginThemeControl.onclick = () => handlerThemeSwitch(loginThemeControl)
-            loginForm.appendChild(loginThemeControl)
         }
 
         root.innerHTML = `
