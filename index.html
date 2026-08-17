@@ -946,8 +946,8 @@
         
         const createViews = () => {
             viewProfile = document.createElement('div')
-            viewProfile.hidden = true
             viewProfile.className = 'view-profile'
+            viewProfile.hidden = !!localStorage.nav && localStorage.nav != 'profile'
             viewProfile.innerHTML = `
                 <section class="view-section">
                     <h2 id="personal-info">Personal Information</h2>
@@ -977,7 +977,7 @@
             profileCountry = viewProfile.getElementsByClassName('profile-country')[0]
 
             viewAccounts = document.createElement('div')
-            viewAccounts.hidden = true
+            viewAccounts.hidden = localStorage.nav != 'accounts'
             viewAccounts.className = 'view-accounts'
             viewAccounts.innerHTML = `
                 <section class="view-section">
@@ -1015,7 +1015,7 @@
             main.appendChild(viewAccounts)
             
             viewTerminal = document.createElement('div')
-            viewTerminal.hidden = true
+            viewTerminal.hidden = localStorage.nav != 'terminal'
             viewTerminal.className = 'view-terminal'
             main.appendChild(viewTerminal)
         }
@@ -1023,21 +1023,17 @@
         let renderLoggedState = () => {
             let casesNav = {
                 profile: {
-                    view: viewProfile,
                     menu: menuProfile
                 },
                 accounts: {
-                    view: viewAccounts,
                     menu: menuAccounts
                 },
                 terminal: {
-                    view: viewTerminal,
                     menu: menuTerminal
                 }
             }
             let selectedNav = casesNav[localStorage.nav || 'profile']
             selectedNav.menu.classList.add('active')
-            selectedNav.view.hidden = false
             if (localStorage.nav == 'terminal') useAdvancedChartWidget()
         }
 
