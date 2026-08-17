@@ -834,6 +834,32 @@
                 `
             renderToggleIcon(collapsed)
             
+            let touchStartX = 0
+            let touchStartY = 0
+            let touchStartT = 0
+
+            nav.ontouchstart = e => {
+                touchStartX = e.changedTouches[0].screenX
+                touchStartY = e.changedTouches[0].screenY
+                touchStartT = Date.now()
+            }
+
+            nav.ontouchend = e => {
+                let touchEndX = e.changedTouches[0].screenX
+                let dX = touchEndX - touchStartX
+                if (Math.abs(dX) < 50) return
+                let touchEndY = e.changedTouches[0].screenY
+                let dY = touchEndY - touchStartY
+                if (Math.abs(dY) > 50) return
+                let touchEndT = Date.now()
+                let dT = touchEndT - touchStartT
+                if (dT > 500) return
+                let collapsed = dX < 0
+                if (collapsed == nav.classList.contains('collapsed')) return
+                nav.classList.toggle('collapsed', collapsed)
+                localStorage.left_side_collapsed = collapsed ? 'yes' : 'no'
+                renderToggleIcon(collapsed)
+            }
             
             const collapseMenu = () => {
                 if (isNarrowScreen()) {
