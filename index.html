@@ -902,7 +902,7 @@
         }
         
         const useAdvancedChartWidget = () => {
-            var widget = document.getElementsByClassName('tradingview-widget-container')[0]
+            let widget = document.getElementsByClassName('tradingview-widget-container')[0]
             if (widget) viewTerminal.removeChild(widget)
             let tradingviewWidgetContainer = document.createElement('div')
             tradingviewWidgetContainer.classList.add('tradingview-widget-container')
@@ -1032,7 +1032,7 @@
                     menu: menuTerminal
                 }
             }
-            var selectedNav = casesNav[localStorage.nav || 'profile']
+            let selectedNav = casesNav[localStorage.nav || 'profile']
             selectedNav.menu.classList.add('active')
             selectedNav.view.hidden = false
             if (localStorage.nav == 'terminal') useAdvancedChartWidget()
