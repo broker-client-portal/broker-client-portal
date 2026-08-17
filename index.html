@@ -383,15 +383,15 @@
         margin: auto;
         display: flex;
         flex-direction: column;
-        gap: 12px;
         padding: 32px var(--page-padding);
         height: 100%;
     }
-
+    
     .login-form label {
+        height: var(--page-padding);
+        align-items: center;
         font-size: 0.8rem;
         color: var(--text-muted);
-        margin-bottom: -4px;
     }
     
     .login-login,
@@ -405,14 +405,17 @@
         border: 1px solid var(--border-color);
         background: var(--background-tertiary);
         outline: none;
+        margin-top: calc(0.5 * var(--page-padding));
+    }
+
+    .login-login {
+        margin-bottom: var(--page-padding);
     }
     
     .login-label-login {
         margin-top: auto;
     }
-    .login-label-password {
-        margin-top: 6px;
-    }
+
 
     .login-submit {
         min-height: 40px;
@@ -423,7 +426,7 @@
         border: 1px solid var(--border-color);
         background: var(--background-secondary);
         outline: none;
-        margin-top: var(--page-padding);
+        margin-top: calc(2.5 * var(--page-padding));
         margin-bottom: auto;
         display: flex;
         align-items: center;
