@@ -776,8 +776,14 @@
             document.documentElement.toggleAttribute('dark', window.dark)
             if (localStorage.logged) useAdvancedChartWidget()
         }
+
+        const isNarrowScreen = () => window.innerWidth < 720
+
         const createLeftSideMenu = () => {
-            let collapsed = localStorage.left_side_collapsed == 'yes'
+            let collapsed = localStorage.left_side_collapsed
+                ? localStorage.left_side_collapsed == 'yes'
+                : isNarrowScreen()
+
             main.innerHTML = `
                 <nav class="${collapsed ? 'collapsed' : ''}">
                     <div class="menu-profile${!localStorage.nav || localStorage.nav == 'profile' ? ' active' : ''}">
@@ -828,11 +834,16 @@
                 `
             renderToggleIcon(collapsed)
             
+            
             const collapseMenu = () => {
-                nav.classList.add('collapsed')
-                localStorage.left_side_collapsed = 'yes'
-                renderToggleIcon(true)
+                if (isNarrowScreen()) {
+                    nav.classList.add('collapsed')
+                    localStorage.left_side_collapsed = 'yes'
+                    renderToggleIcon(true)
+                }
             }
+            
+            window.addEventListener('resize', collapseMenu)
 
             menuProfile.onclick = () => {
                 menuProfile.classList.add('active')
