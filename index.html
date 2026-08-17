@@ -106,6 +106,32 @@
         background: var(--background-primary);
     }
 
+    
+    button {
+        min-height: 40px;
+        padding: 0 var(--page-padding);
+        font: inherit;
+        font-family: inherit;
+        color: var(--text-normal);
+        border-radius: var(--border-radius-small);
+        border: 1px solid var(--border-color);
+        background: var(--background-secondary);
+        outline: none;
+        cursor: pointer;
+        user-select: none;
+        transition: all var(--transition-fast);
+    }
+    button:active {
+        transform: translateY(1px);
+    }
+    button:hover {
+        border-color: var(--border-color-active);
+        color: var(--text-active);
+    }
+    button:focus {
+        border-color: var(--border-color-active);
+    }
+
     .logo {
         flex: 0 0 auto;
         min-width: 0;
@@ -143,31 +169,9 @@
 
     .logout {
         flex: 0 0 auto;
-        min-height: 40px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0 var(--page-padding);
-        border: 1px solid var(--border-color);
-        border-radius: var(--border-radius-small);
-        background: var(--background-secondary);
-        color: var(--text-normal);
-        cursor: pointer;
-        user-select: none;
-        transition:
-            background var(--transition-fast),
-            color var(--transition-fast),
-            border-color var(--transition-fast),
-            transform var(--transition-fast);
-    }
-
-    .logout:hover {
-        border-color: var(--border-color-active);
-        color: var(--text-active);
-    }
-
-    .logout:active {
-        transform: translateY(1px);
     }
 
     .logout-dialog-overlay {
@@ -222,34 +226,14 @@
     }
 
     .logout-dialog-button {
-      flex: 1;
-      padding: var(--page-padding);
-      font-size: 14px;
-      border-radius: var(--border-radius-small);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      border: 1px solid var(--border-color);
-      background: var(--background-secondary);
-      color: var(--text-normal);
-      font-family: inherit;
-    }
-
-    .logout-dialog-button:focus,
-    .logout-dialog-button:hover,
-    .logout-dialog-button:active {
-        border-color: var(--border-color-active);
-        color: var(--text-active);
-        outline: none;
+        flex: 1;
     }
 
     .logout-dialog-confirm:focus,
     .logout-dialog-confirm:hover,
     .logout-dialog-confirm:active {
         border-color: red !important;
-    }
-    
-    .logout-dialog-button:active {
-        transform: translateY(1px);
+        outline: none;
     }
 
     nav {
@@ -418,43 +402,22 @@
 
 
     .login-submit {
-        min-height: 40px;
-        padding: 0 var(--page-padding);
-        font: inherit;
-        color: var(--text-normal);
-        border-radius: var(--border-radius-small);
-        border: 1px solid var(--border-color);
-        background: var(--background-secondary);
-        outline: none;
         margin-top: calc(2.5 * var(--page-padding));
         margin-bottom: auto;
         display: flex;
         align-items: center;
         justify-content: center;
-        cursor: pointer;
-        user-select: none;
-        transition:
-            background var(--transition-fast),
-            color var(--transition-fast),
-            border-color var(--transition-fast),
-            transform var(--transition-fast);
-    }
-    
-    .login-submit:active {
-        transform: translateY(1px);
     }
 
     .login-login:focus,
-    .login-password:focus,
-    .login-submit:focus {
+    .login-password:focus {
         border-color: var(--border-color-active);
         outline: 2px solid var(--border-color-active);
         outline-offset: 0;
     }
 
     .login-login:hover,
-    .login-password:hover,
-    .login-submit:hover {
+    .login-password:hover {
         border-color: var(--border-color-active);
         color: var(--text-active);
     }
@@ -742,14 +705,14 @@
                     <span>${client.profile.first_name + ' ' + client.profile.last_name}</span>
                 </div>
 
-                <div class="logout">
+                <button class="logout">
                     <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
                         <polyline points="16 17 21 12 16 7"/>
                         <line x1="21" y1="12" x2="9" y2="12"/>
                     </svg>
                     Sign Out
-                </div>
+                </button>
                 <div class="logout-dialog-overlay" hidden>
                     <div class="logout-dialog">
                         <div class="logout-dialog-header">
