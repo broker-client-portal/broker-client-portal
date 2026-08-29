@@ -10,6 +10,9 @@
         display: none !important;
         visibility: hidden !important;
     }
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
 
     html {
         --text-normal: #1a1a1a;
@@ -569,7 +572,9 @@
         .view-profile,
         .view-accounts,
         .view-terminal
-        {
+        {* {
+  -webkit-tap-highlight-color: transparent;
+}
             margin-left: 80px;
         }
         
