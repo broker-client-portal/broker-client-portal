@@ -847,13 +847,13 @@
             nav.ontouchend = e => {
                 let touchEndX = e.changedTouches[0].screenX
                 let dX = touchEndX - touchStartX
-                if (Math.abs(dX) < 50) return
+                if (Math.abs(dX) < 30) return
                 let touchEndY = e.changedTouches[0].screenY
                 let dY = touchEndY - touchStartY
-                if (Math.abs(dY) > 50) return
+                if (Math.abs(dY) > Math.abs(dX)) return
                 let touchEndT = Date.now()
                 let dT = touchEndT - touchStartT
-                if (dT > 500) return
+                if (dT > 1500) return
                 let collapsed = dX < 0
                 if (collapsed == nav.classList.contains('collapsed')) return
                 nav.classList.toggle('collapsed', collapsed)
